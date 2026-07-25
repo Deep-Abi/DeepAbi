@@ -1,0 +1,5 @@
+.legal-copy{max-width:760px; margin:0 auto;}
+.legal-copy h2{font-size:20px; margin:32px 0 12px;}
+.legal-copy h2:first-child{margin-top:0;}
+.legal-copy p{margin-bottom:8px;}
+.legal-copy a{color:var(--violet); text-decoration:underline;}

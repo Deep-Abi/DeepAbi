@@ -1,0 +1,29 @@
+.featured-case{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+.featured-case-visual{position:relative; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md);}
+.case-meta{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:22px; padding-top:22px; border-top:1px solid var(--border);}
+.case-meta span{display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); margin-bottom:4px;}
+.case-meta strong{font-size:14px; color:var(--navy);}
+.mini-review{font-size:13.5px; color:var(--text-secondary); font-style:italic; line-height:1.6;}
+.mini-review i{color:var(--violet); margin-right:6px;}
+.mini-review span{display:block; margin-top:6px; font-style:normal; font-weight:600; color:var(--text); font-size:12.5px;}
+
+.mock-browser{border-radius:var(--radius-md) var(--radius-md) 0 0; overflow:hidden; border:1px solid var(--border); background:#fff;}
+.mock-browser-bar{background:var(--surface); padding:10px 14px; display:flex; gap:6px; border-bottom:1px solid var(--border);}
+.mock-browser-bar span{width:9px; height:9px; border-radius:50%; background:var(--border);}
+.mock-browser-body-img img{width:100%; height:140px; object-fit:cover;}
+
+.device-row{display:flex; align-items:flex-end; justify-content:center; gap:40px; flex-wrap:wrap;}
+.device-frame{position:relative; text-align:center;}
+.device-frame img, .device-frame picture{border-radius:14px; border:6px solid var(--navy); box-shadow:var(--shadow-md);}
+.device-frame.desktop img{width:clamp(220px, 34vw, 480px); height:auto; aspect-ratio:8/5; object-fit:cover; border-radius:10px;}
+.device-frame.tablet img{width:clamp(150px, 20vw, 260px); height:auto; aspect-ratio:13/17; object-fit:cover; border-radius:18px;}
+.device-frame.mobile img{width:clamp(96px, 12vw, 150px); height:auto; aspect-ratio:15/32; object-fit:cover; border-radius:24px;}
+.device-label{display:block; margin-top:14px; font-size:13px; font-weight:600; color:var(--text-secondary);}
+.device-label i{color:var(--violet); margin-right:6px;}
+
+@media (max-width:1024px){
+  .featured-case{grid-template-columns:1fr;}
+}
+@media (max-width:768px){
+  .device-row{gap:20px;}
+}
