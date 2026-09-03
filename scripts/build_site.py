@@ -25,34 +25,33 @@ TAGLINE_SECONDARY = "Ambition Beyond Imagination"
 TAGLINE_THIRD = "Engineering Digital Excellence"
 
 # ---------------- Contact ----------------
-EMAIL = "deepabi.tech@gmail.com"
-PHONE_1_DISPLAY = "+91 8946097125"
+# Single source of truth for every contact detail rendered across the site.
+# EMAIL stays as an alias for the primary address so existing imports keep working.
+EMAIL_PRIMARY = "hello@deepabi.com"      # public-facing business email
+EMAIL_SECONDARY = "deepabi.tech@gmail.com"  # technical contact
+EMAIL = EMAIL_PRIMARY
+PHONE_1_DISPLAY = "+91 89460 97125"      # primary
 PHONE_1_TEL = "+918946097125"
-PHONE_2_DISPLAY = "+91 8925279380"
-PHONE_2_TEL = "+918925279380"
+PHONE_2_DISPLAY = "+91 90255 48401"      # secondary
+PHONE_2_TEL = "+919025548401"
 WHATSAPP_URL = f"https://wa.me/{PHONE_1_TEL.replace('+','')}"
 
 # ---------------- SEO keyword pool (used sparingly, naturally, across pages) ----------------
+# Google ignores meta keywords for ranking; this stays only as a compact,
+# honest summary of what the company does and where. Real targeting lives in
+# the titles, headings, body copy and structured data.
 SEO_KEYWORDS = (
-    "website development, website design, corporate website, business website, "
-    "website maintenance, website support, SEO, technical SEO, responsive website, "
-    "landing page, professional website, website agency, website company, "
-    "web development, business growth, modern website, portfolio website, "
-    "custom website, digital solutions, technology company, "
-    "custom website development, business website development, corporate website design, "
-    "performance optimization, small business website, enterprise website, "
-    "web application development, e-commerce website, website redesign, DeepAbi"
+    "software development company in Chennai, software company in Chennai, "
+    "custom software development Chennai, application development company Chennai, "
+    "website development company in Chennai, web application development Chennai, "
+    "mobile app development Chennai, desktop application development Chennai, "
+    "SaaS development Chennai, AI automation solutions Chennai, "
+    "business automation Chennai, software maintenance Chennai, "
+    "software development company in Mogappair, website development company in Mogappair, "
+    "software company Ambattur, software company Anna Nagar, "
+    "DeepAbi Innovations, DeepAbi"
 )
 
-LOGO_SVG = '''<svg class="logo-mark" viewBox="0 0 40 40" fill="none" role="img" aria-label="DeepAbi logo">
-  <circle cx="10" cy="10" r="4" fill="#00D9C8"/><circle cx="30" cy="10" r="4" fill="#8B5CF6"/>
-  <circle cx="10" cy="30" r="4" fill="#8B5CF6"/><circle cx="30" cy="30" r="4" fill="#10B981"/>
-  <circle cx="20" cy="20" r="5" fill="#081F4D"/>
-  <line x1="10" y1="10" x2="20" y2="20" stroke="#00D9C8" stroke-width="2" opacity="0.65"/>
-  <line x1="30" y1="10" x2="20" y2="20" stroke="#8B5CF6" stroke-width="2" opacity="0.65"/>
-  <line x1="10" y1="30" x2="20" y2="20" stroke="#8B5CF6" stroke-width="2" opacity="0.65"/>
-  <line x1="30" y1="30" x2="20" y2="20" stroke="#10B981" stroke-width="2" opacity="0.65"/>
-</svg>'''
 
 NAV_ITEMS = [
     ("home", "index.html", "Home"),
@@ -93,6 +92,7 @@ def head(title, description, canonical_path, og_image="assets/images/backgrounds
 
 <!-- Favicons -->
 <link rel="icon" type="image/x-icon" href="assets/images/logos/favicon.ico" />
+<link rel="icon" type="image/png" sizes="48x48" href="assets/images/logos/favicon-48.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="assets/images/logos/favicon-32.png" />
 <link rel="icon" type="image/png" sizes="16x16" href="assets/images/logos/favicon-16.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="assets/images/logos/favicon-180.png" />
@@ -139,9 +139,17 @@ def navbar(active):
     </div>
   </div>
   <div class="container nav-inner">
-    <a href="index.html" class="logo">
-      {LOGO_SVG}
-      DeepAbi
+    <a href="index.html" class="logo" aria-label="DeepAbi Innovations — home">
+      <picture class="logo-full">
+        <source srcset="assets/images/logos_icons/web/logo.avif" type="image/avif">
+        <source srcset="assets/images/logos_icons/web/logo.webp" type="image/webp">
+        <img src="assets/images/logos_icons/web/logo.png" alt="DeepAbi Innovations" width="324" height="132">
+      </picture>
+      <picture class="logo-plate">
+        <source srcset="assets/images/logos_icons/web/logo-plate.avif" type="image/avif">
+        <source srcset="assets/images/logos_icons/web/logo-plate.webp" type="image/webp">
+        <img src="assets/images/logos_icons/web/logo-plate.png" alt="DeepAbi Innovations" width="288" height="132">
+      </picture>
     </a>
     <nav class="nav-links" aria-label="Primary">
 {main_links_html}
@@ -154,7 +162,13 @@ def navbar(active):
 
 <div id="mobile-menu">
   <div class="mobile-menu-head">
-    <a href="index.html" class="logo">DeepAbi</a>
+    <a href="index.html" class="logo" aria-label="DeepAbi Innovations — home">
+      <picture class="logo-full">
+        <source srcset="assets/images/logos_icons/web/logo.avif" type="image/avif">
+        <source srcset="assets/images/logos_icons/web/logo.webp" type="image/webp">
+        <img src="assets/images/logos_icons/web/logo.png" alt="DeepAbi Innovations" width="324" height="132">
+      </picture>
+    </a>
     <button class="menu-toggle" id="menuClose" aria-label="Close menu"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
   </div>
   <nav aria-label="Mobile">
@@ -200,19 +214,16 @@ def footer():
     <div class="footer-grid">
       <div>
         <div class="footer-logo">
-          <svg width="30" height="30" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <circle cx="10" cy="10" r="4" fill="#00D9C8"/><circle cx="30" cy="10" r="4" fill="#8B5CF6"/>
-            <circle cx="10" cy="30" r="4" fill="#8B5CF6"/><circle cx="30" cy="30" r="4" fill="#10B981"/>
-            <circle cx="20" cy="20" r="5" fill="#FFFFFF"/>
-          </svg>
-          DeepAbi
+          <picture class="footer-logo-img">
+            <source srcset="assets/images/logos_icons/web/logo-plate.avif" type="image/avif">
+            <source srcset="assets/images/logos_icons/web/logo-plate.webp" type="image/webp">
+            <img src="assets/images/logos_icons/web/logo-plate.png" alt="DeepAbi Innovations" width="288" height="132">
+          </picture>
         </div>
-        <p>{TAGLINE_PRIMARY}. Websites, software, and long-term technology partnerships for ambitious businesses.</p>
+        <p>{TAGLINE_PRIMARY}. Based in Mogappair, DeepAbi Innovations builds websites, applications and custom software for businesses across Ambattur, Anna Nagar and Chennai.</p>
         <div class="footer-social">
-          <a href="#" aria-label="DeepAbi on GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a>
-          <a href="#" aria-label="DeepAbi on LinkedIn"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a>
-          <a href="#" aria-label="DeepAbi on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-          <a href="#" aria-label="DeepAbi on X"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+          <a href="https://www.instagram.com/deepabi_innovations/" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61593491164948" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
         </div>
       </div>
       <div class="footer-col">
@@ -228,15 +239,16 @@ def footer():
         <h5>Services</h5>
         <ul>
           <li><a href="services.html#website-development"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Website Development</a></li>
-          <li><a href="services.html#website-maintenance"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Website Maintenance</a></li>
-          <li><a href="services.html#seo"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> SEO Services</a></li>
-          <li><a href="services.html#performance-optimization"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Performance Optimization</a></li>
+          <li><a href="services.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Web Applications</a></li>
+          <li><a href="services.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Mobile Applications</a></li>
+          <li><a href="services.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Custom Software</a></li>
         </ul>
       </div>
       <div class="footer-col footer-col-contact">
         <h5>Contact</h5>
         <ul>
           <li><a href="mailto:{EMAIL}"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span><em>Email</em>{EMAIL}</span></a></li>
+          <li><a href="mailto:{EMAIL_SECONDARY}"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span><em>Technical</em>{EMAIL_SECONDARY}</span></a></li>
           <li><a href="tel:{PHONE_1_TEL}"><i class="fa-solid fa-phone" aria-hidden="true"></i><span><em>Phone</em>{PHONE_1_DISPLAY}</span></a></li>
           <li><a href="tel:{PHONE_2_TEL}"><i class="fa-solid fa-phone" aria-hidden="true"></i><span><em>Phone</em>{PHONE_2_DISPLAY}</span></a></li>
           <li><a href="{WHATSAPP_URL}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i><span><em>WhatsApp</em>Chat with us</span></a></li>

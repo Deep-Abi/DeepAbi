@@ -7,16 +7,38 @@ SCHEMA = '''<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "DeepAbi",
+  "name": "DeepAbi Innovations",
+  "alternateName": "DeepAbi",
   "url": "https://www.deepabi.com",
   "logo": "https://www.deepabi.com/assets/images/logos/favicon-512.png",
-  "description": "DeepAbi is a professional website design agency and software company delivering custom website development, corporate website design, SEO, and digital solutions for small business and enterprise clients.",
-  "email": "deepabi.tech@gmail.com",
-  "telephone": ["+91 8946097125", "+91 8925279380"],
+  "description": "DeepAbi Innovations is a software development company in Chennai building websites, web and mobile applications, desktop and custom software, SaaS products, AI automation and software maintenance.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Mogappair, Chennai",
+    "addressRegion": "Tamil Nadu",
+    "addressCountry": "IN"
+  },
+  "areaServed": [
+    { "@type": "Place", "name": "Mogappair, Chennai" },
+    { "@type": "Place", "name": "Ambattur, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar, Chennai" },
+    { "@type": "City", "name": "Chennai" }
+  ],
+  "knowsAbout": [
+    "Website Development",
+    "Web Application Development",
+    "Mobile Application Development",
+    "Desktop Application Development",
+    "Custom Software Development",
+    "SaaS Product Development",
+    "AI and Business Automation",
+    "Software Maintenance and Support"
+  ],
+  "email": "hello@deepabi.com",
+  "telephone": ["+918946097125", "+919025548401"],
   "sameAs": [
-    "https://github.com/deepabi",
-    "https://www.linkedin.com/company/deepabi",
-    "https://www.instagram.com/deepabi"
+    "https://www.instagram.com/deepabi_innovations/",
+    "https://www.facebook.com/profile.php?id=61593491164948"
   ]
 }
 </script>
@@ -30,23 +52,26 @@ SCHEMA = '''<script type="application/ld+json">
 </script>'''
 
 WHAT_WE_BUILD = [
-    ("fa-solid fa-store", "Business Websites", "Clean, conversion-aware sites that make small and local businesses look credible fast.", "business-websites"),
-    ("fa-solid fa-building", "Corporate Websites", "Structured, trust-building corporate website design for multi-department organizations.", "corporate-websites"),
-    ("fa-solid fa-rocket", "Landing Pages", "Single-purpose, high-conversion landing page builds engineered around one campaign goal.", "landing-pages"),
-    ("fa-solid fa-images", "Portfolio Websites", "Image-forward, fast-loading portfolio sites for studios, agencies, and individual professionals.", "portfolio-websites"),
-    ("fa-solid fa-screwdriver-wrench", "Website Maintenance", "Ongoing updates, security monitoring, and website support so your site never goes stale.", "website-maintenance"),
-    ("fa-solid fa-magnifying-glass-chart", "SEO Optimization", "Technical SEO, on-page optimization, and analytics that make growth measurable.", "seo"),
-    ("fa-solid fa-gauge-high", "Performance Optimization", "Core Web Vitals, caching, and code-level tuning for a genuinely fast website.", "performance-optimization"),
-    ("fa-solid fa-diagram-project", "Scalable Architecture", "Systems designed to grow from first launch to enterprise-level traffic without a rebuild.", "website-development"),
+    ("fa-solid fa-window-maximize", "Website Development", "Professional websites for businesses, companies and brands — from landing pages and portfolios to complete corporate websites.", "website-development"),
+    ("fa-solid fa-table-columns", "Web Applications", "Interactive web-based applications, dashboards, portals and business systems built around real operational needs.", None),
+    ("fa-solid fa-mobile-screen", "Mobile Applications", "Custom mobile applications designed around business requirements, user experiences and digital services.", None),
+    ("fa-solid fa-desktop", "Desktop Applications", "Purpose-built desktop software and internal tools for business operations, productivity and specialized workflows.", None),
+    ("fa-solid fa-code", "Custom Software", "Tailored software solutions designed around unique business processes, requirements and operational challenges.", None),
+    ("fa-solid fa-cloud", "SaaS Products", "Cloud-based software products and platforms designed for accessible, scalable and ongoing digital services.", None),
+    ("fa-solid fa-robot", "AI &amp; Automation", "AI-powered solutions and workflow automation designed to reduce repetitive work and improve business efficiency.", None),
+    ("fa-solid fa-screwdriver-wrench", "Software Maintenance", "Ongoing software support, improvements, optimization and maintenance to keep digital products reliable and evolving.", None),
 ]
 
 
 def build_card(icon, title, desc, anchor):
+    """anchor=None links to the Services page root until that service has its
+    own section there, so no card ever points at a fragment that doesn't exist."""
+    href = f"services.html#{anchor}" if anchor else "services.html"
     return f'''<div class="wwb-card" data-reveal>
         <div class="wwb-icon"><i class="{icon}" aria-hidden="true"></i></div>
         <h3>{title}</h3>
         <p>{desc}</p>
-        <a href="services.html#{anchor}" class="wwb-more">Learn more <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        <a href="{href}" class="wwb-more">Learn more <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>'''
 
 
@@ -169,7 +194,7 @@ body = f'''
       <div class="section-head center" data-reveal>
         <span class="eyebrow cyan">What We Do</span>
         <h2>What We Build</h2>
-        <p style="margin:0 auto;">From a first business website to a fully custom web application, DeepAbi covers the complete lifecycle of your digital presence.</p>
+        <p style="margin:0 auto;">From professional websites to custom software, DeepAbi builds digital solutions designed around real business needs.</p>
       </div>
       <div class="wwb-grid">
       {wwb_cards_html}
@@ -313,8 +338,8 @@ body = f'''
 page(
     filename="index.html",
     active="home",
-    title="DeepAbi | Website Development &amp; Digital Solutions Company",
-    description="DeepAbi is a professional website development and technology company delivering custom website development, corporate website design, SEO, and digital solutions for small business and enterprise clients.",
+    title="DeepAbi Innovations | Software Development Company in Chennai",
+    description="DeepAbi Innovations builds websites, web and mobile apps, custom software, SaaS and automation solutions for businesses in Mogappair and across Chennai.",
     body=body,
     canonical_path="",
     extra_css='<link rel="stylesheet" href="css/pages/home.css">',

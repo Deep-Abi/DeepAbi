@@ -163,9 +163,9 @@ body = f'''
 page(
     filename="about.html",
     active="about",
-    title="About DeepAbi | Professional Website Company &amp; Software Company",
-    description="Learn about DeepAbi's mission, vision, and core values &mdash; a professional website design agency and software company driving economic empowerment through digital transformation.",
-    extra_keywords="about DeepAbi, website design agency team, technology solutions company",
+    title="About DeepAbi Innovations | Software Company in Chennai",
+    description="The mission, vision and values behind DeepAbi Innovations — a software company in Chennai building digital products that create real economic opportunity.",
+    extra_keywords="about DeepAbi Innovations, software company Chennai, technology company Mogappair",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/about.css">',
     schema=SCHEMA,

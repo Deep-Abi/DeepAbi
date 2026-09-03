@@ -1,7 +1,7 @@
-.about-intro{display:grid; grid-template-columns:1fr 1.05fr; gap:56px; align-items:center;}
+.about-intro{display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.05fr); gap:56px; align-items:center;}
 
 /* ---------- Mission / Vision cards (identical layout) ---------- */
-.mv-grid{display:grid; grid-template-columns:1fr 1fr; gap:28px;}
+.mv-grid{display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:28px;}
 .mv-card{
   position:relative; background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius-lg);
   padding:44px 40px; text-align:center; overflow:hidden;
@@ -42,8 +42,8 @@
 .stage-pill.future{background:rgba(0,217,200,0.12); color:var(--cyan-ink);}
 
 @media (max-width:1024px){
-  .about-intro{grid-template-columns:1fr;}
+  .about-intro{grid-template-columns:minmax(0, 1fr);}
 }
 @media (max-width:768px){
-  .mv-grid{grid-template-columns:1fr;}
+  .mv-grid{grid-template-columns:minmax(0, 1fr);}
 }

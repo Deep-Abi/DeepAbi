@@ -1,7 +1,7 @@
-.detail-overview{display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;}
+.detail-overview{display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(0, 0.95fr); gap:56px; align-items:center;}
 
 a.card{display:block;}
 
 @media (max-width:1024px){
-  .detail-overview{grid-template-columns:1fr;}
+  .detail-overview{grid-template-columns:minmax(0, 1fr);}
 }

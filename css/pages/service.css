@@ -1,0 +1,129 @@
+/* ==========================================================================
+   Service pages — shared components
+   --------------------------------------------------------------------------
+   Used by the Services landing page and all eight dedicated service pages.
+   Everything here is built from the existing design tokens (--violet, --cyan,
+   --gold, --mint, --border, --radius-*, --shadow-*, --ease) and mirrors the
+   card language already used by .wwb-card on Home, so the service pages read
+   as part of the same site rather than a separate template.
+
+   Deliberately NOT redefined here: .service-block, .service-list,
+   .service-quicknav, .page-header-gradient, .process-track, .card, .grid-*,
+   .cta-section, .faq-item. Those already exist in services.css / common.css
+   and are reused as-is — service pages link both stylesheets.
+   ========================================================================== */
+
+/* ---------- Breadcrumb (navigation context only) ---------- */
+.svc-breadcrumb{
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px;
+  font-size:13px; margin-bottom:18px; color:rgba(255,255,255,0.62);
+}
+.svc-breadcrumb a{color:rgba(255,255,255,0.82); transition:color 0.2s ease;}
+.svc-breadcrumb a:hover{color:var(--gold);}
+.svc-breadcrumb i{font-size:9px; opacity:0.55;}
+.svc-breadcrumb [aria-current="page"]{color:#fff; font-weight:600;}
+
+/* ---------- Service index cards (landing page + related services) ----------
+   Same shape, border, radius, hover lift and gradient edge as .wwb-card on
+   Home, so the eight categories look identical in both places. */
+.svc-grid{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:var(--sp-3);}
+.svc-grid-3{grid-template-columns:repeat(3, minmax(0, 1fr));}
+.svc-card{
+  position:relative; display:flex; flex-direction:column;
+  background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius-lg);
+  padding:28px 24px; text-align:left; overflow:hidden;
+  transition:transform 0.35s var(--ease), box-shadow 0.35s var(--ease), border-color 0.35s var(--ease);
+}
+.svc-card::before{
+  content:''; position:absolute; inset:0; padding:1.5px; border-radius:var(--radius-lg);
+  background:linear-gradient(135deg, var(--cyan), var(--violet));
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  opacity:0; transition:opacity 0.35s var(--ease); pointer-events:none;
+}
+.svc-card:hover{transform:translateY(-8px); box-shadow:var(--shadow-md); border-color:transparent;}
+.svc-card:hover::before{opacity:1;}
+.svc-icon{
+  width:50px; height:50px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+  background:rgba(139,92,246,0.10); color:var(--violet); font-size:21px; margin-bottom:18px;
+  transition:transform 0.35s var(--ease), background 0.35s var(--ease), color 0.35s var(--ease);
+}
+.svc-card:hover .svc-icon{transform:scale(1.12) rotate(-6deg); background:linear-gradient(135deg, var(--violet), var(--cyan)); color:#fff;}
+.svc-card h3{font-size:16.5px; margin-bottom:8px;}
+.svc-card p{font-size:13.5px; margin-bottom:0;}
+.svc-card-link{
+  display:inline-flex; align-items:center; gap:6px; margin-top:auto; padding-top:14px;
+  font-size:12.5px; font-weight:700; color:var(--violet);
+  transition:gap 0.3s var(--ease);
+}
+.svc-card-link i{font-size:11px; transition:transform 0.3s var(--ease);}
+.svc-card:hover .svc-card-link{gap:10px;}
+.svc-card:hover .svc-card-link i{transform:translateX(3px);}
+/* whole-card link variant used for related services */
+a.svc-card{color:inherit;}
+a.svc-card h3{color:var(--navy);}
+
+/* ---------- Two-column explainer (text + supporting image) ---------- */
+.svc-split{display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(0, 0.95fr); gap:56px; align-items:center;}
+.svc-split.reverse .svc-split-media{order:-1;}
+.svc-split p{margin-bottom:14px;}
+.svc-split p:last-child{margin-bottom:0;}
+/* Image wrapper is intentionally simple: swapping in a real dedicated service
+   photograph later means replacing the file only — no markup change needed. */
+.svc-split-media{
+  border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md);
+  border:1px solid var(--border); aspect-ratio:3/2;
+}
+.svc-split-media picture, .svc-split-media img{width:100%; height:100%; display:block;}
+.svc-split-media img{object-fit:cover;}
+
+/* ---------- Business use cases ---------- */
+.svc-usecases{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:var(--sp-3);}
+.svc-usecase{
+  position:relative; background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--radius-md); padding:26px 26px 24px 30px;
+  transition:transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.svc-usecase::before{
+  content:''; position:absolute; left:0; top:18px; bottom:18px; width:4px; border-radius:0 4px 4px 0;
+  background:linear-gradient(180deg, var(--violet), var(--cyan));
+}
+.svc-usecase:nth-child(2n)::before{background:linear-gradient(180deg, var(--gold), var(--mint));}
+.svc-usecase:hover{transform:translateY(-4px); box-shadow:var(--shadow-sm); border-color:rgba(139,92,246,0.28);}
+.svc-usecase h4{
+  font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em;
+  color:var(--violet); margin-bottom:8px;
+}
+.svc-usecase p{font-size:14.5px; margin-bottom:0; color:var(--text-secondary);}
+
+/* ---------- Who it's for (chips) ---------- */
+.svc-audience{display:flex; flex-wrap:wrap; gap:10px; justify-content:center;}
+.svc-audience span{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:14px; font-weight:600; color:var(--text);
+  background:var(--card-bg); border:1px solid var(--border);
+  padding:11px 18px; border-radius:999px;
+  transition:border-color 0.25s var(--ease), transform 0.25s var(--ease);
+}
+.svc-audience span::before{content:'\\f00c'; font-family:'Font Awesome 6 Free'; font-weight:900; font-size:11px; color:var(--mint);}
+.svc-audience span:hover{border-color:var(--violet); transform:translateY(-2px);}
+
+/* ---------- Responsive ----------
+   Follows the breakpoints already used across the project (1024 / 768 / 600)
+   rather than introducing new ones. */
+@media (max-width:1024px){
+  .svc-grid{grid-template-columns:repeat(2, minmax(0, 1fr));}
+  .svc-grid-3{grid-template-columns:repeat(2, minmax(0, 1fr));}
+  .svc-split{grid-template-columns:minmax(0, 1fr); gap:36px;}
+  .svc-split.reverse .svc-split-media{order:0;}
+  .svc-split-media{max-width:min(620px, 100%); margin:0 auto;}
+}
+@media (max-width:768px){
+  .svc-usecases{grid-template-columns:minmax(0, 1fr);}
+}
+@media (max-width:600px){
+  .svc-grid, .svc-grid-3{grid-template-columns:minmax(0, 1fr);}
+  .svc-usecase{padding:22px 20px 20px 24px;}
+  .svc-audience{justify-content:flex-start;}
+  .svc-audience span{font-size:13.5px; padding:10px 15px;}
+}

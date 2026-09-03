@@ -135,8 +135,8 @@ body = f'''
 page(
     filename="projects.html",
     active="projects",
-    title="Projects &amp; Success Stories | DeepAbi Website Development Company",
-    description="See DeepAbi's featured success story, Card Session, plus small business, corporate, landing page, and web application development project concepts across desktop, tablet, and mobile.",
+    title="Software &amp; Web Development Projects | DeepAbi Innovations",
+    description="Selected DeepAbi Innovations work and project concepts across websites, web applications and business software, shown on desktop, tablet and mobile.",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/projects.css">',
     extra_js='<script src="js/pages/projects.js"></script>',

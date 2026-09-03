@@ -158,8 +158,8 @@ body = f'''
 page(
     filename="services.html",
     active="services",
-    title="Website Development, SEO &amp; Maintenance Services | DeepAbi",
-    description="DeepAbi offers custom website development, corporate website design, small business website builds, landing page development, website maintenance, SEO services, and performance optimization.",
+    title="Software Development Services in Chennai | DeepAbi Innovations",
+    description="Website development, web and mobile applications, custom software, SaaS, AI automation and software maintenance — built around how your business actually works.",
     extra_keywords="website redesign, website support, technical SEO agency, responsive website design company",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/services.css">',

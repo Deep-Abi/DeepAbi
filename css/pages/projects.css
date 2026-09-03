@@ -1,6 +1,6 @@
-.featured-case{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+.featured-case{display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:56px; align-items:center;}
 .featured-case-visual{position:relative; border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md);}
-.case-meta{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:22px; padding-top:22px; border-top:1px solid var(--border);}
+.case-meta{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px; margin-top:22px; padding-top:22px; border-top:1px solid var(--border);}
 .case-meta span{display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-secondary); margin-bottom:4px;}
 .case-meta strong{font-size:14px; color:var(--navy);}
 .mini-review{font-size:13.5px; color:var(--text-secondary); font-style:italic; line-height:1.6;}
@@ -22,8 +22,11 @@
 .device-label i{color:var(--violet); margin-right:6px;}
 
 @media (max-width:1024px){
-  .featured-case{grid-template-columns:1fr;}
+  .featured-case{grid-template-columns:minmax(0, 1fr);}
 }
 @media (max-width:768px){
   .device-row{gap:20px;}
+}
+@media (max-width:480px){
+  .case-meta{grid-template-columns:minmax(0, 1fr); gap:12px;}
 }

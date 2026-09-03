@@ -4,7 +4,7 @@
 
 .hero{
   position:relative;
-  padding:200px 0 84px;
+  padding:148px 0 76px;
   overflow:hidden;
   background:var(--navy);
   color:#fff;
@@ -23,7 +23,7 @@
   50%{transform:translateY(-26px) translateX(14px);}
 }
 
-.hero-grid{position:relative; z-index:2; display:grid; grid-template-columns:1.05fr 0.95fr; gap:60px; align-items:center;}
+.hero-grid{position:relative; z-index:2; display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:60px; align-items:center;}
 .hero-content h1{color:#fff; margin-bottom:20px; min-height:1.1em;}
 .hero-content h1 .grad-text{
   background:linear-gradient(100deg, var(--cyan), var(--gold) 55%, var(--violet) 85%);
@@ -40,8 +40,22 @@
 
 .hero-actions{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:8px;}
 
-.hero-visual{position:relative; will-change:transform; transition:transform 0.2s ease-out;}
-.hero-illustration-img{border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-lg); position:relative; z-index:1;}
+.hero-visual{position:relative; will-change:transform; transition:transform 0.2s ease-out; display:flex; justify-content:center;}
+/* The source image is a tall portrait crop (~2:3). Letting it stretch to
+   100% of the column width (its old behavior) made the hero image balloon
+   to 1000px+ tall once the layout drops to a single column on tablet/mobile.
+   Shrink-wrapping the frame to the image and capping height responsively
+   keeps the true aspect ratio (no cropping/distortion) while staying
+   visually balanced against the hero copy at every breakpoint. */
+.hero-illustration-img{
+  border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-lg); position:relative; z-index:1;
+  width:fit-content; margin:0 auto; display:block;
+}
+.hero-illustration-img img{
+  width:auto; height:auto; max-width:100%;
+  max-height:clamp(320px, 62vh, 640px);
+  margin:0 auto;
+}
 .hero-visual-glow{
   position:absolute; inset:-40px; z-index:0; border-radius:50%;
   background:radial-gradient(circle, rgba(0,217,200,0.28), rgba(139,92,246,0.14) 55%, transparent 75%);
@@ -49,8 +63,66 @@
 }
 @keyframes heroGlowPulse{0%,100%{opacity:0.55; transform:scale(1);}50%{opacity:0.8; transform:scale(1.035);}}
 
+/* Desktop-only uplift for the hero visual (right column).
+   Rather than stealing width from the copy, the hero band itself widens on
+   desktop: both columns push outward from centre — text to the left, image
+   to the right — so the left column ends up ROOMIER than its original
+   546px, keeping its original wrapping and feel, while the image column
+   gains the rest. Only above 1024px:
+     1. the hero's own containers widen 1200px -> 1440px (all three widen
+        together so the copy, the mission/vision cards and the stat strip
+        stay edge-aligned);
+     2. the split stays near-even (1 : 1.05) with a 48px gap — a slight
+        bias to the image, not a land grab;
+     3. the height cap rises while the hero's vertical padding tightens, so
+        the taller visual fills the band instead of floating in it.
+   The frame still shrink-wraps the image, so the aspect ratio stays exact
+   (no crop, no distortion) and the render never exceeds the 1024x1536
+   source (no upscaling / quality loss). Left-column typography, spacing,
+   alignment, animations and all tablet/mobile behaviour are untouched —
+   the base rules above still govern every viewport at or below 1024px. */
+@media (min-width:1025px){
+  /* Vertical breathing room trimmed to the practical floor. The fixed
+     navbar stacks a ~37px topbar over an ~88px nav row (~125px total), so
+     128px is as low as the top padding can go before the eyebrow tag starts
+     tucking under the bar — anything tighter has to come out of the navbar
+     itself, not the hero. Bottom padding and the stat-strip offset tighten
+     to match so the band stays visually balanced top-to-bottom. */
+  .hero{padding:128px 0 76px;}
+  .hero-stats{margin-top:28px; padding-top:20px;}
+  .hero > .container{max-width:1440px;}
+  /* Small inset on the copy only — nudges the headline block rightward off
+     the widened band's edge without changing its internal spacing,
+     alignment or type. Its usable text width lands at ~541px, still
+     within a few px of the original 546px, so wrapping is preserved. */
+  .hero-content{padding-left:28px;}
+  /* Split rebalanced to 1 : 1.3 so the extra image size comes from the
+     column ratio rather than from widening the band further out of line
+     with the sections below. At the 1380px band this leaves the copy
+     column at ~544px against its ORIGINAL 546px — the stopping point:
+     the copy sits ~90px further left than it originally did while its
+     column stays essentially its original width, so the headline
+     wrapping and feel are preserved. Widening further would only
+     inflate the copy column past its original proportions. */
+  .hero-grid{grid-template-columns:minmax(0, 1fr) minmax(0, 1.36fr); gap:48px;}
+  /* Frame anchored to the right edge of its column instead of centred, so
+     the remaining slack in the column falls on the inner side — the image
+     sits flush with the hero's right edge rather than floating mid-column.
+     Base rule keeps centring for the stacked tablet/mobile layout. */
+  .hero-visual{justify-content:flex-end;}
+  /* The copy+image row is the tallest thing in the hero: the image drives
+     the row height, and the copy is centred against it, so shortening the
+     image shortens the whole first band and pulls the copy's own dead space
+     in with it. Cap eased back so the row loses ~180px of height while the
+     image stays clearly larger than its original 427x640. */
+  .hero-illustration-img img{
+    max-height:clamp(680px, 98vh, 1140px);
+  }
+  .hero-visual-glow{inset:-64px;}
+}
+
 /* ---------- Hero Mission / Vision glass cards ---------- */
-.hero-mv-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:8px; position:relative; z-index:2;}
+.hero-mv-grid{display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:20px; margin-top:8px; position:relative; z-index:2;}
 .hero-mv-card{
   position:relative; padding:26px 26px 24px; border-radius:20px;
   background:rgba(255,255,255,0.07);
@@ -99,7 +171,7 @@
 @keyframes scrolldot{0%{opacity:1; top:6px;}70%{opacity:0; top:18px;}100%{opacity:0; top:6px;}}
 
 /* ---------- Featured project ---------- */
-.featured-project{display:grid; grid-template-columns:0.95fr 1.05fr; gap:56px; align-items:center;}
+.featured-project{display:grid; grid-template-columns:minmax(0, 0.95fr) minmax(0, 1.05fr); gap:56px; align-items:center;}
 .featured-visual{border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md);}
 .featured-copy p{margin-bottom:14px;}
 .featured-list{margin:18px 0 26px; display:grid; gap:10px;}
@@ -119,7 +191,7 @@
 .why-card h3{font-size:18px;}
 
 /* ---------- What We Build cards ---------- */
-.wwb-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--sp-3);}
+.wwb-grid{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:var(--sp-3);}
 .wwb-card{
   position:relative; background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius-lg);
   padding:28px 24px; text-align:left; overflow:hidden;
@@ -216,23 +288,11 @@
   transform:translate(-50%,-50%) translate(-9%,12%) scale(0.74) rotate(-5deg);
 }
 
-@media (max-width:600px){
-  .device-stack{height:340px;}
-  .device-stack-card[data-role="desktop"] .device-stack-frame{width:300px; height:200px;}
-  .device-stack-card[data-role="tablet"] .device-stack-frame{width:180px; height:240px;}
-  .device-stack-card[data-role="mobile"] .device-stack-frame{width:120px; height:260px;}
-  .device-stack-card.stack-mid{transform:translate(-50%,-50%) translate(70px,20px) scale(0.8) rotate(6deg);}
-  .device-stack-card.stack-back{transform:translate(-50%,-50%) translate(-70px,32px) scale(0.7) rotate(-7deg);}
-  .device-stack-large{height:280px;}
-  .device-stack-large .device-stack-card.stack-mid{transform:translate(-50%,-50%) translate(7%,6%) scale(0.84) rotate(4deg);}
-  .device-stack-large .device-stack-card.stack-back{transform:translate(-50%,-50%) translate(-7%,10%) scale(0.7) rotate(-5deg);}
-}
-
 .responsive-content{max-width:900px; margin:0 auto; text-align:center;}
 .responsive-heading{font-size:clamp(24px,3vw,30px); margin-bottom:12px;}
 .responsive-lede{font-size:16px; max-width:640px; margin:0 auto var(--sp-5);}
 
-.rf-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; text-align:left;}
+.rf-grid{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; text-align:left;}
 .rf-item{
   display:flex; align-items:flex-start; gap:16px; padding:18px 20px; border-radius:16px;
   background:var(--card-bg); border:1px solid var(--border);
@@ -290,25 +350,39 @@
 .testimonial-arrow.prev{left:0;}
 .testimonial-arrow.next{right:0;}
 
+/* ==========================================================================
+   Responsive — consolidated, largest breakpoint to smallest
+   ========================================================================== */
 @media (max-width:1024px){
-  .wwb-grid{grid-template-columns:repeat(2,1fr);}
+  .hero-grid{grid-template-columns:minmax(0, 1fr);}
+  .hero-visual{order:-1;}
+  .featured-project{grid-template-columns:minmax(0, 1fr);}
+  .wwb-grid{grid-template-columns:repeat(2, minmax(0, 1fr));}
+}
+@media (max-width:768px){
+  .hero{padding:160px 0 70px;}
+  .hero-mv-grid{grid-template-columns:minmax(0, 1fr);}
+  .featured-project{gap:32px;}
 }
 @media (max-width:600px){
-  .wwb-grid{grid-template-columns:1fr;}
+  .device-stack{height:340px;}
+  .device-stack-card[data-role="desktop"] .device-stack-frame{width:300px; height:200px;}
+  .device-stack-card[data-role="tablet"] .device-stack-frame{width:180px; height:240px;}
+  .device-stack-card[data-role="mobile"] .device-stack-frame{width:120px; height:260px;}
+  .device-stack-card.stack-mid{transform:translate(-50%,-50%) translate(70px,20px) scale(0.8) rotate(6deg);}
+  .device-stack-card.stack-back{transform:translate(-50%,-50%) translate(-70px,32px) scale(0.7) rotate(-7deg);}
+  .device-stack-large{height:280px;}
+  .device-stack-large .device-stack-card.stack-mid{transform:translate(-50%,-50%) translate(7%,6%) scale(0.84) rotate(4deg);}
+  .device-stack-large .device-stack-card.stack-back{transform:translate(-50%,-50%) translate(-7%,10%) scale(0.7) rotate(-5deg);}
+  .wwb-grid{grid-template-columns:minmax(0, 1fr);}
   .testimonial-card{padding:32px 22px 26px;}
-  .rf-grid{grid-template-columns:1fr;}
+  .rf-grid{grid-template-columns:minmax(0, 1fr);}
   .testimonial-carousel{padding:0 4px;}
   .testimonial-arrow{width:36px; height:36px; font-size:12px;}
   .testimonial-arrow.prev{left:-2px;}
   .testimonial-arrow.next{right:-2px;}
 }
-
-@media (max-width:1024px){
-  .hero-grid{grid-template-columns:1fr;}
-  .hero-visual{order:-1;}
-  .featured-project{grid-template-columns:1fr;}
-}
-@media (max-width:768px){
-  .hero{padding:160px 0 70px;}
-  .hero-mv-grid{grid-template-columns:1fr;}
+@media (max-width:375px){
+  .hero-actions{gap:12px;}
+  .hero-mv-card{padding:20px 18px 18px;}
 }

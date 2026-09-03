@@ -162,8 +162,8 @@ body = f'''
 page(
     filename="service-detail.html",
     active="services",
-    title="Custom Website Development Company | DeepAbi Services",
-    description="Custom website development, business website development, and web application development from DeepAbi — overview, benefits, process, and FAQs for a fast, scalable, SEO-ready build.",
+    title="Custom Website Development in Chennai | DeepAbi Innovations",
+    description="Custom website and web application development from DeepAbi Innovations — overview, benefits, process and FAQs for a fast, scalable, SEO-ready build.",
     extra_keywords="hire website developers, custom web app developers, professional website company",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/service-detail.css">',

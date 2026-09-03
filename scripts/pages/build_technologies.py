@@ -117,8 +117,8 @@ body = f'''
 page(
     filename="technologies.html",
     active="technologies",
-    title="Technologies &amp; Engineering Stack | DeepAbi Software Company",
-    description="The technology stack behind DeepAbi's website development and web application development: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS, Cloudflare, and more.",
+    title="Software Development Technologies | DeepAbi Innovations",
+    description="The engineering stack behind DeepAbi Innovations' software: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS and Cloudflare.",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/technologies.css">',
     extra_js='<script src="js/pages/technologies.js"></script>',

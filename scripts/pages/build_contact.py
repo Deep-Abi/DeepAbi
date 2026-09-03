@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from build_site import page, EMAIL, PHONE_1_DISPLAY, PHONE_1_TEL, PHONE_2_DISPLAY, PHONE_2_TEL, WHATSAPP_URL
+from build_site import page, EMAIL, EMAIL_SECONDARY, PHONE_1_DISPLAY, PHONE_1_TEL, PHONE_2_DISPLAY, PHONE_2_TEL, WHATSAPP_URL
 
 SCHEMA = '''<script type="application/ld+json">
 {
@@ -47,14 +47,14 @@ body = f'''
               <select id="cf-service" name="service" required>
                 <option value="" disabled selected>Select a service</option>
                 <option>Website Development</option>
-                <option>Landing Pages</option>
-                <option>Corporate Websites</option>
-                <option>Business Websites</option>
-                <option>Portfolio Websites</option>
-                <option>Website Maintenance</option>
-                <option>SEO</option>
-                <option>Performance Optimization</option>
-                <option>Something else</option>
+                <option>Web Applications</option>
+                <option>Mobile Applications</option>
+                <option>Desktop Applications</option>
+                <option>Custom Software</option>
+                <option>SaaS Products</option>
+                <option>AI &amp; Automation</option>
+                <option>Software Maintenance</option>
+                <option>Other / Not Sure</option>
               </select>
             </div>
           </div>
@@ -71,11 +71,11 @@ body = f'''
         <div class="contact-info-card">
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></div>
-            <div><h4>Office</h4><p>378A-MIG, 1st Floor, Mogappair Eri Scheme,<br>2nd Main Road, 3rd Cross Street,<br>Mogappair West, Chennai &ndash; 600037,<br>Tamil Nadu, India</p></div>
+            <div><h4>Office</h4><p>Mogappair, Chennai - 37,<br>Tamil Nadu, India</p></div>
           </div>
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-envelope" aria-hidden="true"></i></div>
-            <div><h4>Email</h4><a href="mailto:{EMAIL}">{EMAIL}</a></div>
+            <div><h4>Email</h4><a href="mailto:{EMAIL}">{EMAIL}</a><br><a href="mailto:{EMAIL_SECONDARY}">{EMAIL_SECONDARY}</a></div>
           </div>
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-phone" aria-hidden="true"></i></div>
@@ -98,9 +98,8 @@ body = f'''
             <div>
               <h4>Follow Us</h4>
               <div class="footer-social" style="margin-top:10px;">
-                <a href="#" aria-label="DeepAbi on GitHub"><i class="fa-brands fa-github" aria-hidden="true"></i></a>
-                <a href="#" aria-label="DeepAbi on LinkedIn"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></a>
-                <a href="#" aria-label="DeepAbi on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                <a href="https://www.instagram.com/deepabi_innovations/" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61593491164948" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
               </div>
             </div>
           </div>
@@ -115,8 +114,8 @@ body = f'''
       <div class="map-section" data-reveal>
         <div class="map-embed">
           <iframe
-            src="https://www.google.com/maps?q=378A-MIG,+1st+Floor,+Mogappair+Eri+Scheme,+2nd+Main+Road,+3rd+Cross+Street,+Mogappair+West,+Chennai+600037,+Tamil+Nadu,+India&output=embed"
-            title="DeepAbi office location on Google Maps — 378A-MIG, 1st Floor, Mogappair Eri Scheme, Mogappair West, Chennai"
+            src="https://www.google.com/maps?q=Mogappair,+Chennai,+Tamil+Nadu,+India&output=embed"
+            title="DeepAbi location on Google Maps — Mogappair, Chennai, Tamil Nadu"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
             allowfullscreen
@@ -130,9 +129,9 @@ body = f'''
 page(
     filename="contact.html",
     active="contact",
-    title="Contact DeepAbi | Website Development Company",
-    description="Get in touch with DeepAbi, a professional website design agency and software company. Call, WhatsApp, or email for a free 30-minute consultation.",
-    extra_keywords="contact website developers, hire website design agency, get a website quote",
+    title="Contact DeepAbi Innovations | Software Development Chennai",
+    description="Talk to DeepAbi Innovations about your software project. Based in Mogappair, Chennai — call, WhatsApp or email for a free 30-minute consultation.",
+    extra_keywords="contact software developers Chennai, hire software company Mogappair, software project quote",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/contact.css">',
     extra_js='<script src="js/pages/contact.js"></script>',
