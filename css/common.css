@@ -707,3 +707,204 @@ footer{background:var(--navy); color:#B8C4D9; padding:0 0 30px;}
   .logo-full img,.logo-plate img,
   #navbar.scrolled .logo-full img,#navbar.scrolled .logo-plate img{height:36px;}
 }
+
+/* ==========================================================================
+   Services mega menu
+   --------------------------------------------------------------------------
+   Scoped entirely to the navbar. Nothing here touches existing nav links,
+   the logo, the top bar or any page content. All values come from the
+   existing design tokens.
+
+   Desktop/tablet (>768px): a panel anchored under the fixed #navbar.
+   Because it is absolutely positioned inside the navbar it cannot push
+   anything around — opening it causes no layout shift. It inherits the
+   navbar's stacking context (z-index:1000), so it sits above page content.
+
+   Mobile (<=768px): the panel is not used at all; the mobile menu gets an
+   accordion instead (.m-acc, further down).
+   ========================================================================== */
+
+/* Left static on purpose: the panel then positions against #navbar (which is
+   position:fixed), so it centres on the navbar rather than on the trigger. */
+.nav-mega{position:static; display:flex; align-items:center;}
+
+/* The panel is a descendant of .nav-links, so the existing `.nav-links a`
+   rules (8px 0 padding, 14.5px text, hover lift, animated ::after underline)
+   would otherwise apply to all ten links inside it. Reset them here; the
+   component rules below are #navbar-scoped so they outrank this reset. */
+#navbar .mega a{
+  position:static; padding:0; margin:0;
+  font-size:inherit; font-weight:inherit; color:inherit; transform:none;
+}
+#navbar .mega a::after{content:none; display:none;}
+#navbar .mega a:hover{transform:none;}
+
+/* Trigger keeps the exact look of a normal nav link (same font, weight,
+   colour and animated underline) — only a chevron is added. */
+.nav-mega-trigger{display:inline-flex; align-items:center; gap:7px;}
+.nav-mega-trigger .mega-chev{
+  font-size:10px; opacity:0.7;
+  transition:transform 0.22s var(--ease), opacity 0.22s var(--ease);
+}
+.nav-mega.open .nav-mega-trigger .mega-chev{transform:rotate(180deg); opacity:1;}
+
+/* ---------- Panel ---------- */
+.mega{
+  position:absolute; top:calc(100% + 14px); left:50%;
+  width:min(940px, calc(100vw - 40px));
+  /* translateX centres the panel under the navbar; translateY+opacity give
+     the open/close motion. transform is on one axis only so centring is
+     never lost mid-animation. */
+  transform:translateX(-50%) translateY(-8px);
+  opacity:0; visibility:hidden; pointer-events:none;
+  background:var(--card-bg); color:var(--text);
+  border:1px solid var(--border); border-radius:18px;
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+  transition:opacity 0.2s var(--ease), transform 0.2s var(--ease), visibility 0.2s linear;
+}
+.nav-mega.open .mega{
+  opacity:1; visibility:visible; pointer-events:auto;
+  transform:translateX(-50%) translateY(0);
+}
+
+/* Over dark heroes the navbar paints its links white
+   (body.hero-dark #navbar:not(.scrolled) .nav-links a, specificity 1-3-1).
+   The panel is its own white surface sitting inside that same .nav-links, so
+   every colour rule below carries the same or greater specificity to stay
+   readable in both navbar states. */
+#navbar .mega,
+body.hero-dark #navbar:not(.scrolled) .nav-links .mega a{color:var(--text);}
+
+/* ---------- Panel header ---------- */
+.mega-head{
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+  padding:20px 26px 0;
+}
+.mega-head h2{
+  font-family:var(--font-display); font-size:14px; font-weight:700;
+  letter-spacing:0.02em; color:var(--navy); margin:0;
+}
+.mega-head p{font-size:12.5px; color:var(--text-secondary); margin:0;}
+
+/* ---------- Service grid ---------- */
+.mega-grid{
+  display:grid; grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:6px; padding:16px 18px 18px;
+}
+#navbar .mega a.mega-item{
+  display:flex; gap:12px; align-items:flex-start;
+  padding:12px 12px 13px; border-radius:14px;
+  border:1px solid transparent; background:transparent;
+  transition:transform 0.2s var(--ease), background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+#navbar .mega a.mega-item:hover, #navbar .mega a.mega-item:focus-visible{
+  transform:translateY(-3px);
+  background:var(--surface); border-color:var(--border);
+}
+#navbar .mega a.mega-item:focus-visible{outline:2px solid var(--violet); outline-offset:2px;}
+.mega-ico{
+  flex-shrink:0; width:38px; height:38px; border-radius:11px;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+  background:rgba(139,92,246,0.10); color:var(--violet);
+  transition:background 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+#navbar .mega a.mega-item:hover .mega-ico, #navbar .mega a.mega-item:focus-visible .mega-ico{
+  background:linear-gradient(135deg, var(--violet), var(--cyan)); color:#fff;
+  transform:scale(1.06);
+}
+.mega-item-body{min-width:0;}
+#navbar .mega .mega-item-title{
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--font-display); font-size:14px; font-weight:600;
+  margin-bottom:3px; line-height:1.25;
+  transition:color 0.2s var(--ease);
+}
+#navbar .mega a.mega-item .mega-item-title{color:var(--navy);}
+#navbar .mega a.mega-item:hover .mega-item-title,
+#navbar .mega a.mega-item:focus-visible .mega-item-title{color:var(--violet);}
+.mega-item-title .mega-arrow{
+  font-size:9px; opacity:0; transform:translateX(-4px);
+  transition:opacity 0.2s var(--ease), transform 0.2s var(--ease);
+}
+#navbar .mega a.mega-item:hover .mega-arrow, #navbar .mega a.mega-item:focus-visible .mega-arrow{opacity:1; transform:translateX(0);}
+#navbar .mega a.mega-item .mega-item-desc{
+  font-size:12px; line-height:1.45; color:var(--text-secondary); margin:0;
+}
+
+/* ---------- Footer CTA ---------- */
+.mega-foot{
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  flex-wrap:wrap;
+  padding:14px 26px; background:var(--surface);
+  border-top:1px solid var(--border);
+}
+.mega-foot p{font-size:13px; color:var(--text-secondary); margin:0;}
+#navbar .mega .mega-foot a.mega-foot-cta{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:13.5px; font-weight:700; color:var(--violet);
+  transition:gap 0.2s var(--ease), color 0.2s var(--ease);
+}
+.mega-foot-cta i{font-size:11px; transition:transform 0.2s var(--ease);}
+#navbar .mega .mega-foot a.mega-foot-cta:hover{gap:12px; color:var(--violet-ink);}
+.mega-foot-cta:hover i{transform:translateX(3px);}
+
+/* Tablet: two columns rather than four cramped ones. */
+@media (max-width:1100px){
+  .mega{width:min(560px, calc(100vw - 40px));}
+  .mega-grid{grid-template-columns:repeat(2, minmax(0, 1fr));}
+}
+/* The panel never renders below this width — the mobile accordion takes over. */
+@media (max-width:768px){
+  .mega{display:none;}
+  .nav-mega-trigger .mega-chev{display:none;}
+}
+@media (prefers-reduced-motion: reduce){
+  .mega, .mega-item, .mega-ico, .mega-arrow, .mega-chev{transition:none;}
+}
+
+/* ==========================================================================
+   Mobile: Services accordion inside #mobile-menu
+   Uses the same type and divider treatment as the existing mobile nav links
+   so it reads as one list, not a bolted-on component.
+   ========================================================================== */
+.m-acc{display:flex; flex-direction:column;}
+.m-acc-trigger{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  width:100%; text-align:left; background:none; border:none; cursor:pointer;
+  font-family:var(--font-display); font-size:24px; font-weight:600; color:var(--text);
+  padding:16px 4px; border-bottom:1px solid var(--border);
+  transition:color 0.2s var(--ease);
+}
+.m-acc-trigger:hover, .m-acc-trigger[aria-expanded="true"]{color:var(--violet);}
+.m-acc-trigger .m-acc-chev{
+  font-size:14px; color:var(--violet);
+  transition:transform 0.24s var(--ease);
+}
+.m-acc-trigger[aria-expanded="true"] .m-acc-chev{transform:rotate(180deg);}
+
+/* Height is set in JS from the panel's own scrollHeight, so the animation is
+   exact at any font size and never clips a wrapped label. */
+.m-acc-panel{
+  max-height:0; overflow:hidden;
+  transition:max-height 0.28s var(--ease);
+}
+#mobile-menu nav .m-acc-panel a{
+  display:flex; align-items:center; gap:12px;
+  font-family:var(--font-body); font-size:15.5px; font-weight:600;
+  padding:11px 4px 11px 8px; border-bottom:none; color:var(--text);
+}
+#mobile-menu nav .m-acc-panel a:hover{color:var(--violet);}
+.m-acc-ico{
+  flex-shrink:0; width:30px; height:30px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center; font-size:13px;
+  background:rgba(139,92,246,0.10); color:var(--violet);
+}
+#mobile-menu nav .m-acc-panel a.m-acc-all{
+  gap:8px; margin:6px 0 12px; padding-left:8px;
+  font-size:14px; font-weight:700; color:var(--violet);
+}
+#mobile-menu nav .m-acc-panel a.m-acc-all i{font-size:11px;}
+@media (prefers-reduced-motion: reduce){
+  .m-acc-panel, .m-acc-chev{transition:none;}
+}

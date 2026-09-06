@@ -1,3 +1,20 @@
+"""Services page — high-level overview of DeepAbi's eight service categories.
+
+The detailed Website Development material that used to live on this page has
+moved, unchanged, to service-website-development.html (built by
+build_website_development.py). This page now carries one overview block per
+service, using the same .service-block component the page always used:
+alternating image side, small label, title, short description, capability
+list, CTA.
+
+Each block's id matches the slug used by the navbar mega menu
+(services.html#web-applications and friends), so those links now land on real
+content instead of the top of the page.
+
+Images are temporary re-uses of existing project assets. Swapping in a real
+one later means changing the (image, folder) pair in SERVICES below — nothing
+else changes.
+"""
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -14,14 +31,21 @@ SCHEMA = '''<script type="application/ld+json">
 }
 </script>'''
 
-def service_block(anchor, eyebrow, title, desc, items, image_name, image_alt, icon, reverse=False):
+
+def service_block(anchor, eyebrow, title, desc, items, image_name, image_alt, icon,
+                  cta_label, cta_href, folder="assets/images/services", reverse=False):
+    """The page's existing service block, unchanged apart from two additions:
+    a `folder` argument (so a block can use an image from any asset folder) and
+    a per-service CTA label/href in place of a fixed 'Get Started'."""
     order_class = " reverse" if reverse else ""
-    items_html = "\n".join(f'            <div class="service-list-item"><i class="fa-solid fa-check" aria-hidden="true"></i>{i}</div>' for i in items)
+    items_html = "\n".join(
+        f'            <div class="service-list-item"><i class="fa-solid fa-check" aria-hidden="true"></i>{i}</div>'
+        for i in items)
     return f'''
       <div class="service-block{order_class}" id="{anchor}" data-reveal>
         <div class="service-visual-wrap">
           <div class="service-visual">
-            {picture(image_name, image_alt, 560, 373, "assets/images/services")}
+            {picture(image_name, image_alt, 560, 373, folder)}
           </div>
           <div class="service-big-icon"><i class="{icon}" aria-hidden="true"></i></div>
         </div>
@@ -32,9 +56,98 @@ def service_block(anchor, eyebrow, title, desc, items, image_name, image_alt, ic
           <div class="service-list">
 {items_html}
           </div>
-          <a href="contact.html" class="service-learn-more">Get Started <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          <a href="{cta_href}" class="service-learn-more">{cta_label} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         </div>
       </div>'''
+
+
+# (anchor, eyebrow, title, description, capabilities, image, folder, alt, icon,
+#  cta label, cta href)
+# Only Website Development has a dedicated page so far. The other seven CTAs
+# point at their own section here until their pages are built — one href edit
+# each when that happens.
+SERVICES = [
+    ("website-development", "01 · Build", "Website Development",
+     "Professional websites for businesses, companies and brands — from landing pages and portfolios to complete corporate websites.",
+     ["Corporate Websites", "Business Websites", "Landing Pages",
+      "Responsive Design", "SEO-ready Structure", "Performance Optimization"],
+     "website-development-workspace", "assets/images/services",
+     "Illustration representing a website development project interface",
+     "fa-solid fa-window-maximize",
+     "Explore Website Development", "service-website-development.html"),
+
+    ("web-applications", "02 · Operate", "Web Applications",
+     "Browser-based applications that help a business manage information, customers and day-to-day operations from one place.",
+     ["Business Dashboards", "Client Portals", "Internal Systems",
+      "Database Integration", "Workflow Applications", "API Integration"],
+     "web_application_development", "assets/images/projects",
+     "Illustration representing a browser-based business application",
+     "fa-solid fa-table-columns",
+     "Explore Web Applications", "services.html#web-applications"),
+
+    ("mobile-applications", "03 · Reach", "Mobile Applications",
+     "Mobile applications built around a business service — for customers, for field teams, or for staff who work away from a desk.",
+     ["Android Applications", "iOS Applications", "Cross-platform Apps",
+      "Business Apps", "Customer Apps", "Backend Integration"],
+     "mobile_portrait", "assets/images/projects",
+     "Illustration of a business application shown on a mobile phone",
+     "fa-solid fa-mobile-screen",
+     "Explore Mobile Solutions", "services.html#mobile-applications"),
+
+    ("desktop-applications", "04 · Equip", "Desktop Applications",
+     "Software installed on the computers your team already uses, built for one job and able to work without a connection.",
+     ["Windows Applications", "Internal Business Tools", "Productivity Software",
+      "Data Management Tools", "Custom Workflows", "Offline/Hybrid Applications"],
+     "desktop", "assets/images/projects",
+     "Illustration of business software running on a desktop computer",
+     "fa-solid fa-desktop",
+     "Explore Desktop Software", "services.html#desktop-applications"),
+
+    ("custom-software", "05 · Tailor", "Custom Software",
+     "For processes no off-the-shelf product fits. Software designed around how your business actually works, rather than the other way round.",
+     ["Tailored Business Systems", "Custom Workflows", "Process Automation",
+      "Integration Solutions", "Operational Tools", "Scalable Architecture"],
+     "mission", "assets/images/about",
+     "Abstract illustration representing purpose-built software",
+     "fa-solid fa-code",
+     "Explore Custom Software", "services.html#custom-software"),
+
+    ("saas-products", "06 · Scale", "SaaS Products",
+     "Cloud-based products many customers can sign up for and use online, each with their own account and their own data kept separate.",
+     ["Cloud-based Platforms", "Subscription Systems", "Multi-user Applications",
+      "Secure Access", "Scalable Infrastructure", "Ongoing Product Development"],
+     "enterprise_website_framework", "assets/images/projects",
+     "Abstract illustration representing a cloud-based software platform",
+     "fa-solid fa-cloud",
+     "Explore SaaS Solutions", "services.html#saas-products"),
+
+    ("ai-automation", "07 · Automate", "AI &amp; Automation",
+     "Practical automation and AI applied to specific tasks — less retyping, less chasing, less copying between systems.",
+     ["AI-powered Workflows", "Business Automation", "AI Assistants",
+      "Intelligent Processing", "Repetitive Task Automation", "AI Integrations"],
+     "technology-stack-network", "assets/images/technology",
+     "Illustration of connected systems representing automated workflows",
+     "fa-solid fa-robot",
+     "Explore AI Solutions", "services.html#ai-automation"),
+
+    ("software-maintenance", "08 · Sustain", "Software Maintenance",
+     "Software stays useful only if it keeps up. Ongoing support, fixes and improvements for websites and applications alike.",
+     ["Software Updates", "Bug Fixing", "Performance Optimization",
+      "Security Improvements", "Feature Enhancements", "Ongoing Technical Support"],
+     "website_maintenance", "assets/images/services",
+     "Illustration representing ongoing software maintenance and monitoring",
+     "fa-solid fa-screwdriver-wrench",
+     "Explore Maintenance Services", "services.html#software-maintenance"),
+]
+
+blocks = "\n".join(
+    service_block(anchor, eyebrow, title, desc, items, img, alt, icon, cta_label, cta_href,
+                  folder=folder, reverse=(i % 2 == 1))
+    for i, (anchor, eyebrow, title, desc, items, img, folder, alt, icon, cta_label, cta_href)
+    in enumerate(SERVICES))
+
+quicknav = "\n".join(
+    f'        <a href="#{anchor}">{title}</a>' for anchor, _e, title, *_rest in SERVICES)
 
 body = f'''
   <div class="page-header page-header-gradient services-hero">
@@ -62,85 +175,9 @@ body = f'''
   <div class="section" style="padding-bottom:0;">
     <div class="container">
       <div class="service-quicknav" data-reveal>
-        <a href="#website-development">Website Development</a>
-        <a href="#landing-pages">Landing Pages</a>
-        <a href="#corporate-websites">Corporate Websites</a>
-        <a href="#business-websites">Business Websites</a>
-        <a href="#portfolio-websites">Portfolio Websites</a>
-        <a href="#website-maintenance">Website Maintenance</a>
-        <a href="#seo">SEO</a>
-        <a href="#performance-optimization">Performance Optimization</a>
+{quicknav}
       </div>
-
-      {service_block(
-        "website-development", "01 · Build", "Website Development",
-        "We design and build fast, responsive websites and custom web applications tailored to your business — architected for growth from day one.",
-        ["Custom Web Applications", "Component-Driven Front Ends", "API &amp; CMS Integration", "Responsive, Cross-Device Development", "Accessibility Built In", "Clean, Documented Codebase"],
-        "website-development-workspace", "Illustration representing a website development project interface", "fa-solid fa-code"
-      )}
-
-      {service_block(
-        "landing-pages", "02 · Convert", "Landing Pages",
-        "Single-purpose pages engineered around one campaign goal — built to load fast and convert visitors without distraction.",
-        ["Conversion-Focused Layouts", "A/B Test-Ready Structure", "Fast Mobile Load Times", "Lead Capture Integration", "Analytics Event Tracking", "Copy Written for the Funnel"],
-        "landing_page", "Real landing page design example built by DeepAbi", "fa-solid fa-rocket", reverse=True
-      )}
-
-      {service_block(
-        "corporate-websites", "03 · Represent", "Corporate Websites",
-        "Structured, trust-building sites for organizations with multiple departments, offices, or product lines.",
-        ["Multi-Department IA", "Investor &amp; Press Sections", "Careers &amp; Culture Pages", "Multi-Region Content Support", "Brand System Implementation", "Governance-Ready CMS Roles"],
-        "corporate_websites", "Real corporate website design example built by DeepAbi", "fa-solid fa-building"
-      )}
-
-      {service_block(
-        "business-websites", "04 · Establish", "Business Websites",
-        "A clean, conversion-aware digital presence for service-based and local businesses that need to look credible fast.",
-        ["Service &amp; Pricing Pages", "Local SEO Foundations", "Booking / Contact Integration", "Testimonials &amp; Case Studies", "Mobile-First Layouts", "Fast, Low-Maintenance CMS"],
-        "business_websites", "Real business website design example built by DeepAbi", "fa-solid fa-store", reverse=True
-      )}
-
-      {service_block(
-        "portfolio-websites", "05 · Showcase", "Portfolio Websites",
-        "Image-forward, fast-loading portfolio sites for studios, agencies, and individual professionals.",
-        ["Project Case Study Templates", "Optimized Image Galleries", "Filterable Work Grids", "Personal Brand Styling", "Contact &amp; Inquiry Forms", "Simple Content Updates"],
-        "portfolio_websites", "Real portfolio website design example built by DeepAbi", "fa-solid fa-images"
-      )}
-
-      {service_block(
-        "website-maintenance", "06 · Support", "Website Maintenance",
-        "Launch day is the beginning, not the finish line. We keep your site updated, secure, and running smoothly with proactive, ongoing care.",
-        ["Website Updates", "Bug Fixes", "Security Monitoring", "Performance Optimization", "Scheduled Backups", "Content Updates"],
-        "website_maintenance", "Website maintenance and monitoring dashboard example", "fa-solid fa-screwdriver-wrench", reverse=True
-      )}
-
-      {service_block(
-        "seo", "07 · Grow", "SEO",
-        "We help your site get found. Technical foundations, on-page optimization, and proper analytics setup so growth is measurable.",
-        ["Technical SEO", "On-Page SEO", "Speed Optimization", "Search Console Setup", "Analytics Implementation", "Keyword &amp; Content Strategy"],
-        "seo", "SEO analytics and search performance dashboard example", "fa-solid fa-magnifying-glass-chart"
-      )}
-
-      {service_block(
-        "performance-optimization", "08 · Optimize", "Performance Optimization",
-        "Speed is a feature. We tune every layer of your site so pages load fast and score well on the metrics that matter.",
-        ["Core Web Vitals", "Image Optimization", "Caching Strategy", "Code-Level Optimization", "CDN &amp; Edge Configuration", "Ongoing Performance Monitoring"],
-        "performance_optimization", "Website performance optimization metrics example", "fa-solid fa-gauge-high", reverse=True
-      )}
-
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="container">
-      <div class="section-head center" data-reveal>
-        <span class="eyebrow gold">Want More Detail?</span>
-        <h2>See It In Detail</h2>
-        <p style="margin:0 auto;">Our Website Development service page walks through overview, benefits, process, and FAQs in full detail — the same depth we apply to every engagement.</p>
-      </div>
-      <div style="text-align:center;" data-reveal>
-        <a href="service-detail.html" class="btn btn-accent btn-lg btn-glow">View Full Service Detail <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-      </div>
+{blocks}
     </div>
   </div>
 
@@ -148,7 +185,7 @@ body = f'''
     <div class="container">
       <div class="cta-section" data-reveal>
         <h2>Not sure which service fits?</h2>
-        <p>Tell us about your project and we'll recommend the right starting point — no obligation.</p>
+        <p>Tell us about your project and we'll recommend the right starting point &mdash; no obligation.</p>
         <a href="contact.html" class="btn btn-accent">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
@@ -160,7 +197,6 @@ page(
     active="services",
     title="Software Development Services in Chennai | DeepAbi Innovations",
     description="Website development, web and mobile applications, custom software, SaaS, AI automation and software maintenance — built around how your business actually works.",
-    extra_keywords="website redesign, website support, technical SEO agency, responsive website design company",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/services.css">',
     schema=SCHEMA,

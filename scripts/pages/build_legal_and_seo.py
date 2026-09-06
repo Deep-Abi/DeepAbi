@@ -71,6 +71,7 @@ with open(os.path.join(ROOT, "robots.txt"), "w") as f:
 pages = [
     ("", "1.0", "weekly"),
     ("services.html", "0.9", "monthly"),
+    ("service-website-development.html", "0.9", "monthly"),
     ("service-detail.html", "0.8", "monthly"),
     ("projects.html", "0.8", "weekly"),
     ("technologies.html", "0.6", "monthly"),

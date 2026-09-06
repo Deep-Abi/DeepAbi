@@ -84,7 +84,77 @@
     </a>
     <nav class="nav-links" aria-label="Primary">
       <a href="index.html">Home</a>
-      <a href="services.html">Services</a>
+      <div class="nav-mega" id="servicesNav">
+        <a href="services.html" class="nav-mega-trigger" id="servicesTrigger" aria-haspopup="true" aria-expanded="false" aria-controls="servicesMega">Services <i class="fa-solid fa-chevron-down mega-chev" aria-hidden="true"></i></a>
+        <div class="mega" id="servicesMega" role="group" aria-label="Services">
+          <div class="mega-head">
+            <h2>Software Solutions</h2>
+            <p>From digital experiences to intelligent software systems.</p>
+          </div>
+          <div class="mega-grid">
+          <a href="services.html#website-development" class="mega-item">
+            <span class="mega-ico"><i class="fa-solid fa-window-maximize" aria-hidden="true"></i></span>
+            <span class="mega-item-body">
+              <span class="mega-item-title">Website Development <i class="fa-solid fa-arrow-right mega-arrow" aria-hidden="true"></i></span>
+              <span class="mega-item-desc">Business, corporate and portfolio sites</span>
+            </span>
+          </a>
+          <a href="services.html#web-applications" class="mega-item">
+            <span class="mega-ico"><i class="fa-solid fa-table-columns" aria-hidden="true"></i></span>
+            <span class="mega-item-body">
+              <span class="mega-item-title">Web Applications <i class="fa-solid fa-arrow-right mega-arrow" aria-hidden="true"></i></span>
+              <span class="mega-item-desc">Dashboards, portals and business systems</span>
+            </span>
+          </a>
+          <a href="services.html#mobile-applications" class="mega-item">
+            <span class="mega-ico"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i></span>
+            <span class="mega-item-body">
+              <span class="mega-item-title">Mobile Applications <i class="fa-solid fa-arrow-right mega-arrow" aria-hidden="true"></i></span>
+              <span class="mega-item-desc">Apps built around your services</span>
+            </span>
+          </a>
+          <a href="services.html#desktop-applications" class="mega-item">
+            <span class="mega-ico"><i class="fa-solid fa-desktop" aria-hidden="true"></i></span>
+            <span class="mega-item-body">
+              <span class="mega-item-title">Desktop Applications <i class="fa-solid fa-arrow-right mega-arrow" aria-hidden="true"></i></span>
+              <span class="mega-item-desc">Internal tools and desktop software</span>
+            </span>
+          </a>
+          <a href="services.html#custom-software" class="mega-item">
+            <span class="mega-ico"><i class="fa-solid fa-code" aria-hidden="true"></i></span>
+            <span class="mega-item-body">
+              <span class="mega-item-title">Custom Software <i class="fa-solid fa-arrow-right mega-arrow" aria-hidden="true"></i></span>
+              <span class="mega-item-desc">Built around your exact process</span>
+            </span>
+          </a>
+          <a href="services.html#saas-products" class="mega-item">
+            <span class="mega-ico"><i class="fa-solid fa-cloud" aria-hidden="true"></i></span>
+            <span class="mega-item-body">
+              <span class="mega-item-title">SaaS Products <i class="fa-solid fa-arrow-right mega-arrow" aria-hidden="true"></i></span>
+              <span class="mega-item-desc">Cloud platforms with user accounts</span>
+            </span>
+          </a>
+          <a href="services.html#ai-automation" class="mega-item">
+            <span class="mega-ico"><i class="fa-solid fa-robot" aria-hidden="true"></i></span>
+            <span class="mega-item-body">
+              <span class="mega-item-title">AI &amp; Automation <i class="fa-solid fa-arrow-right mega-arrow" aria-hidden="true"></i></span>
+              <span class="mega-item-desc">Less repetitive work, smarter workflows</span>
+            </span>
+          </a>
+          <a href="services.html#software-maintenance" class="mega-item">
+            <span class="mega-ico"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></span>
+            <span class="mega-item-body">
+              <span class="mega-item-title">Software Maintenance <i class="fa-solid fa-arrow-right mega-arrow" aria-hidden="true"></i></span>
+              <span class="mega-item-desc">Support, updates and improvements</span>
+            </span>
+          </a>
+          </div>
+          <div class="mega-foot">
+            <p>Need something built around your business?</p>
+            <a href="services.html" class="mega-foot-cta">Explore All Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </div>
       <a href="projects.html">Projects</a>
       <a href="technologies.html">Technologies</a>
       <a href="about.html" class="active" aria-current="page">About</a>
@@ -109,7 +179,20 @@
   </div>
   <nav aria-label="Mobile">
     <a href="index.html">Home</a>
-    <a href="services.html">Services</a>
+    <div class="m-acc">
+      <button type="button" class="m-acc-trigger" id="mServicesTrigger" aria-expanded="false" aria-controls="mServicesPanel">Services <i class="fa-solid fa-chevron-down m-acc-chev" aria-hidden="true"></i></button>
+      <div class="m-acc-panel" id="mServicesPanel">
+        <a href="services.html#website-development"><span class="m-acc-ico"><i class="fa-solid fa-window-maximize" aria-hidden="true"></i></span>Website Development</a>
+        <a href="services.html#web-applications"><span class="m-acc-ico"><i class="fa-solid fa-table-columns" aria-hidden="true"></i></span>Web Applications</a>
+        <a href="services.html#mobile-applications"><span class="m-acc-ico"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i></span>Mobile Applications</a>
+        <a href="services.html#desktop-applications"><span class="m-acc-ico"><i class="fa-solid fa-desktop" aria-hidden="true"></i></span>Desktop Applications</a>
+        <a href="services.html#custom-software"><span class="m-acc-ico"><i class="fa-solid fa-code" aria-hidden="true"></i></span>Custom Software</a>
+        <a href="services.html#saas-products"><span class="m-acc-ico"><i class="fa-solid fa-cloud" aria-hidden="true"></i></span>SaaS Products</a>
+        <a href="services.html#ai-automation"><span class="m-acc-ico"><i class="fa-solid fa-robot" aria-hidden="true"></i></span>AI &amp; Automation</a>
+        <a href="services.html#software-maintenance"><span class="m-acc-ico"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i></span>Software Maintenance</a>
+        <a href="services.html" class="m-acc-all">Explore All Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </div>
+    </div>
     <a href="projects.html">Projects</a>
     <a href="technologies.html">Technologies</a>
     <a href="about.html">About</a>

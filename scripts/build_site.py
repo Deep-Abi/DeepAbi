@@ -62,6 +62,21 @@ NAV_ITEMS = [
     ("contact", "contact.html", "Contact"),
 ]
 
+# ---------------- Services mega menu ----------------
+# (icon, label, short blurb, href). Single source of truth for the navbar
+# dropdown — repoint an item at a dedicated service page by editing its
+# href here; no other file needs to change.
+SERVICES_MENU = [
+    ("fa-solid fa-window-maximize", "Website Development", "Business, corporate and portfolio sites", "services.html#website-development"),
+    ("fa-solid fa-table-columns", "Web Applications", "Dashboards, portals and business systems", "services.html#web-applications"),
+    ("fa-solid fa-mobile-screen", "Mobile Applications", "Apps built around your services", "services.html#mobile-applications"),
+    ("fa-solid fa-desktop", "Desktop Applications", "Internal tools and desktop software", "services.html#desktop-applications"),
+    ("fa-solid fa-code", "Custom Software", "Built around your exact process", "services.html#custom-software"),
+    ("fa-solid fa-cloud", "SaaS Products", "Cloud platforms with user accounts", "services.html#saas-products"),
+    ("fa-solid fa-robot", "AI &amp; Automation", "Less repetitive work, smarter workflows", "services.html#ai-automation"),
+    ("fa-solid fa-screwdriver-wrench", "Software Maintenance", "Support, updates and improvements", "services.html#software-maintenance"),
+]
+
 
 def head(title, description, canonical_path, og_image="assets/images/backgrounds/og-social-banner.jpg",
          extra_css="", schema="", extra_keywords=""):
@@ -113,17 +128,63 @@ def head(title, description, canonical_path, og_image="assets/images/backgrounds
 {schema}'''
 
 
+def _services_mega(active):
+    """Services navbar entry: a real link to services.html plus the mega panel."""
+    cls = ' class="nav-mega-trigger active" aria-current="page"' if active else ' class="nav-mega-trigger"'
+    items = "\n".join(
+        f'''          <a href="{href}" class="mega-item">
+            <span class="mega-ico"><i class="{icon}" aria-hidden="true"></i></span>
+            <span class="mega-item-body">
+              <span class="mega-item-title">{title} <i class="fa-solid fa-arrow-right mega-arrow" aria-hidden="true"></i></span>
+              <span class="mega-item-desc">{desc}</span>
+            </span>
+          </a>''' for icon, title, desc, href in SERVICES_MENU)
+    return f'''      <div class="nav-mega" id="servicesNav">
+        <a href="services.html"{cls} id="servicesTrigger" aria-haspopup="true" aria-expanded="false" aria-controls="servicesMega">Services <i class="fa-solid fa-chevron-down mega-chev" aria-hidden="true"></i></a>
+        <div class="mega" id="servicesMega" role="group" aria-label="Services">
+          <div class="mega-head">
+            <h2>Software Solutions</h2>
+            <p>From digital experiences to intelligent software systems.</p>
+          </div>
+          <div class="mega-grid">
+{items}
+          </div>
+          <div class="mega-foot">
+            <p>Need something built around your business?</p>
+            <a href="services.html" class="mega-foot-cta">Explore All Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </div>'''
+
+
+def _services_accordion():
+    """Mobile equivalent: the same eight links as an expandable accordion."""
+    items = "\n".join(
+        f'''        <a href="{href}"><span class="m-acc-ico"><i class="{icon}" aria-hidden="true"></i></span>{title}</a>'''
+        for icon, title, desc, href in SERVICES_MENU)
+    return f'''    <div class="m-acc">
+      <button type="button" class="m-acc-trigger" id="mServicesTrigger" aria-expanded="false" aria-controls="mServicesPanel">Services <i class="fa-solid fa-chevron-down m-acc-chev" aria-hidden="true"></i></button>
+      <div class="m-acc-panel" id="mServicesPanel">
+{items}
+        <a href="services.html" class="m-acc-all">Explore All Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      </div>
+    </div>'''
+
+
 def navbar(active):
     main_links = []
     for key, href, label in NAV_ITEMS:
-        if key == active:
+        if key == "services":
+            main_links.append(_services_mega(active == "services"))
+        elif key == active:
             main_links.append(f'      <a href="{href}" class="active" aria-current="page">{label}</a>')
         else:
             main_links.append(f'      <a href="{href}">{label}</a>')
     main_links_html = "\n".join(main_links)
 
     mobile_links = "\n".join(
-        f'    <a href="{href}">{label}</a>' for key, href, label in NAV_ITEMS
+        _services_accordion() if key == "services" else f'    <a href="{href}">{label}</a>'
+        for key, href, label in NAV_ITEMS
     )
 
     return f'''<a class="skip-link" href="#main">Skip to content</a>

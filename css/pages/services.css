@@ -107,3 +107,14 @@
   .service-list{grid-template-columns:minmax(0, 1fr);}
   .service-block{padding:24px 24px 24px 32px;}
 }
+
+/* Breadcrumb on dedicated service pages. Sits in the dark gradient hero, so
+   it uses the same light-on-navy treatment as the hero copy above it. */
+.wd-breadcrumb{
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px;
+  font-size:13px; margin-bottom:16px; color:rgba(255,255,255,0.62);
+}
+.wd-breadcrumb a{color:rgba(255,255,255,0.82); transition:color 0.2s ease;}
+.wd-breadcrumb a:hover{color:var(--gold);}
+.wd-breadcrumb i{font-size:9px; opacity:0.55;}
+.wd-breadcrumb [aria-current="page"]{color:#fff; font-weight:600;}
