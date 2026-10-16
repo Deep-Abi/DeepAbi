@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from build_site import page, picture, MISSION, VISION_HEADLINE, TAGLINE_THIRD, ABOUT_MISSION_PARAGRAPH, ABOUT_VISION_PARAGRAPH
+from build_site import page, picture, WEBSITE_ONLY_MODE, MISSION, VISION_HEADLINE, TAGLINE_THIRD, ABOUT_MISSION_PARAGRAPH, ABOUT_VISION_PARAGRAPH
 
 SCHEMA = '''<script type="application/ld+json">
 {
@@ -13,6 +13,18 @@ SCHEMA = '''<script type="application/ld+json">
   ]
 }
 </script>'''
+
+# Who we are stays the same; what we say we currently build follows the
+# service registry. The journey timeline below is deliberately untouched -
+# it describes direction, not an offer, and is marked "Next"/"Future Vision".
+if WEBSITE_ONLY_MODE:
+    studio_intro = ("DeepAbi is a digital product and engineering studio. We build websites for "
+                    "businesses that need a technology partner they can actually reach "
+                    "&mdash; not a ticketing queue.")
+else:
+    studio_intro = ("DeepAbi is a digital product and engineering studio. We build websites, "
+                    "software, and AI-powered solutions for businesses that need a technology "
+                    "partner they can actually reach \u2014 not a ticketing queue.")
 
 body = f'''
   <div class="page-header">
@@ -31,7 +43,7 @@ body = f'''
       <div>
         <span class="eyebrow">Who We Are</span>
         <h2 style="font-size:28px; margin-bottom:16px;">Engineers and designers, working as one team</h2>
-        <p style="margin-bottom:14px;">DeepAbi is a digital product and engineering studio. We build websites, software, and AI-powered solutions for businesses that need a technology partner they can actually reach — not a ticketing queue.</p>
+        <p style="margin-bottom:14px;">{studio_intro}</p>
         <p>We keep our team small and senior on purpose. Every project is led by people who write the code and make the design decisions, which means fewer handoffs, faster iteration, and a lot less lost in translation.</p>
       </div>
     </div>
@@ -40,7 +52,7 @@ body = f'''
   <div class="section section-alt">
     <div class="container" data-reveal>
       <div class="section-head center">
-        <span class="eyebrow">What Drives Us</span>
+        <!-- <span class="eyebrow">What Drives Us</span> -->
         <h2>Mission &amp; Vision</h2>
       </div>
       <div class="mv-grid">
@@ -68,7 +80,7 @@ body = f'''
   <div class="section">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow">Core Values</span>
+        <!-- <span class="eyebrow">Core Values</span> -->
         <h2>What guides our work</h2>
       </div>
       <div class="grid-4" data-reveal>
@@ -88,17 +100,17 @@ body = f'''
   <div class="section section-alt">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow cyan">Our Process</span>
+        <!-- <span class="eyebrow cyan">Our Process</span> -->
         <h2>How every DeepAbi project runs</h2>
       </div>
       <div class="process-track" data-reveal>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="process-num">01</span></div><h4>Discover</h4><p>Goals &amp; audience</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span class="process-num">02</span></div><h4>Research</h4><p>Market analysis</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i><span class="process-num">03</span></div><h4>Design</h4><p>Wireframes &amp; UI</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-code" aria-hidden="true"></i><span class="process-num">04</span></div><h4>Development</h4><p>Scalable build</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="process-num">01</span></div><h3>Discover</h3><p>Goals &amp; audience</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span class="process-num">02</span></div><h3>Research</h3><p>Market analysis</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i><span class="process-num">03</span></div><h3>Design</h3><p>Wireframes &amp; UI</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-code" aria-hidden="true"></i><span class="process-num">04</span></div><h3>Development</h3><p>Scalable build</p></div>
         <div class="process-step"><div class="process-dot"><i class="fa-solid fa-vial" aria-hidden="true"></i><span class="process-num">05</span></div><h4>Testing</h4><p>Cross-device QA</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-rocket" aria-hidden="true"></i><span class="process-num">06</span></div><h4>Deployment</h4><p>Production launch</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><span class="process-num">07</span></div><h4>Maintenance</h4><p>Ongoing support</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-rocket" aria-hidden="true"></i><span class="process-num">06</span></div><h3>Deployment</h3><p>Production launch</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><span class="process-num">07</span></div><h3>Maintenance</h3><p>Ongoing support</p></div>
       </div>
     </div>
   </div>
@@ -107,26 +119,26 @@ body = f'''
   <div class="section">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow">Our Journey</span>
+        <!-- <span class="eyebrow">Our Journey</span> -->
         <h2>Where we are, and where we're headed</h2>
       </div>
       <div class="vtimeline" data-reveal>
         <div class="vtimeline-item">
           <div class="vtimeline-dot"></div>
           <span class="stage-pill now">Current Stage</span>
-          <h4>Startup</h4>
+          <h3>Startup</h3>
           <p>Building our foundation — delivering websites, web applications, maintenance, and SEO for early clients with hands-on attention to every project.</p>
         </div>
         <div class="vtimeline-item future">
           <div class="vtimeline-dot"></div>
           <span class="stage-pill next">Next</span>
-          <h4>AI &amp; Automation</h4>
+          <h3>AI &amp; Automation</h3>
           <p>Expanding into AI-powered features and workflow automation built directly into client products.</p>
         </div>
         <div class="vtimeline-item future">
           <div class="vtimeline-dot"></div>
           <span class="stage-pill future">Future Vision</span>
-          <h4>Enterprise Software</h4>
+          <h3>Enterprise Software</h3>
           <p>Growing into a full enterprise software partner, supporting larger, more complex digital transformation projects.</p>
         </div>
       </div>
@@ -137,7 +149,7 @@ body = f'''
   <div class="section section-alt">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow cyan">Why DeepAbi</span>
+        <!-- <span class="eyebrow cyan">Why DeepAbi</span> -->
         <h2>A partner, not just a vendor</h2>
         <p style="margin:0 auto;">We keep teams small and senior, communicate directly, and stay invested in your project long after launch.</p>
       </div>
@@ -165,7 +177,6 @@ page(
     active="about",
     title="About DeepAbi Innovations | Software Company in Chennai",
     description="The mission, vision and values behind DeepAbi Innovations — a software company in Chennai building digital products that create real economic opportunity.",
-    extra_keywords="about DeepAbi Innovations, software company Chennai, technology company Mogappair",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/about.css">',
     schema=SCHEMA,

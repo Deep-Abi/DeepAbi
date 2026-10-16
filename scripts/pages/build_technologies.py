@@ -91,7 +91,7 @@ body = f'''
   <div class="section">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow">Stacks We Use</span>
+        <!-- <span class="eyebrow">Stacks We Use</span> -->
         <h2>Explore Our Technology Stack</h2>
       </div>
       <div class="filter-bar center-bar" data-reveal>
@@ -123,5 +123,4 @@ page(
     extra_css='<link rel="stylesheet" href="css/pages/technologies.css">',
     extra_js='<script src="js/pages/technologies.js"></script>',
     schema=SCHEMA,
-    extra_keywords="modern website design tools, technology solutions provider",
 )

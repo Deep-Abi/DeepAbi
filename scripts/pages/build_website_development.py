@@ -9,6 +9,13 @@ alternating layout. The sub-service pill row came across too.
 
 The one deliberately new piece is the hero, which is a proper service-page
 hero rather than the old first block promoted into that role.
+
+This page also absorbed the three useful sections from the retired
+service-detail.html — "What you get with a DeepAbi build", "How a website
+development project runs" and "Often paired with Website Development" — with
+their eyebrow labels removed. The legacy FAQ was not migrated. The old
+"See It In Detail" cross-link section is gone with it, so this page is now the
+single destination for Website Development.
 """
 import sys
 import os
@@ -174,15 +181,48 @@ body = f'''
     </div>
   </div>
 
+  <!-- Migrated from the retired service-detail.html. Same copy and markup,
+       with the small eyebrow labels dropped and the legacy FAQ left behind. -->
+  <div class="section section-alt">
+    <div class="container">
+      <div class="section-head center" data-reveal>
+        <h2>What you get with a DeepAbi build</h2>
+      </div>
+      <div class="grid-4" data-reveal>
+        <div class="card"><div class="card-icon"><i class="fa-solid fa-gauge-high"></i></div><h3>Built for Speed</h3><p>Performance budgets are set before a single line of code is written.</p></div>
+        <div class="card"><div class="card-icon"><i class="fa-solid fa-mobile-screen"></i></div><h3>Responsive by Default</h3><p>Every page is designed and tested across desktop, tablet, and mobile.</p></div>
+        <div class="card"><div class="card-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div><h3>SEO-Ready Structure</h3><p>Semantic HTML and clean metadata from day one, not retrofitted later.</p></div>
+        <div class="card"><div class="card-icon"><i class="fa-solid fa-universal-access"></i></div><h3>Accessible by Design</h3><p>Keyboard navigation, contrast, and screen-reader support are part of the build, not an afterthought.</p></div>
+      </div>
+    </div>
+  </div>
+
   <div class="section">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <!-- <span class="eyebrow gold">Want More Detail?</span> -->
-        <h2>See It In Detail</h2>
-        <p style="margin:0 auto;">Our full Website Development service detail page walks through overview, benefits, process, and FAQs &mdash; the same depth we apply to every engagement.</p>
+        <h2>How a website development project runs</h2>
       </div>
-      <div style="text-align:center;" data-reveal>
-        <a href="service-detail.html" class="btn btn-accent btn-lg btn-glow">View Full Service Detail <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      <div class="process-track" data-reveal>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="process-num">01</span></div><h3>Discover</h3><p>Goals &amp; audience</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span class="process-num">02</span></div><h3>Research</h3><p>Market analysis</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i><span class="process-num">03</span></div><h3>Design</h3><p>Wireframes &amp; UI</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-code" aria-hidden="true"></i><span class="process-num">04</span></div><h3>Development</h3><p>Scalable build</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-vial" aria-hidden="true"></i><span class="process-num">05</span></div><h4>Testing</h4><p>Cross-device QA</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-rocket" aria-hidden="true"></i><span class="process-num">06</span></div><h3>Deployment</h3><p>Production launch</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><span class="process-num">07</span></div><h3>Maintenance</h3><p>Ongoing support</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-alt">
+    <div class="container">
+      <div class="section-head center" data-reveal>
+        <h2>Often paired with Website Development</h2>
+      </div>
+      <div class="grid-3" data-reveal>
+        <a href="#website-maintenance" class="card"><div class="card-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div><h3>Website Maintenance</h3><p>Keep your new site updated, secure, and monitored after launch.</p></a>
+        <a href="#seo" class="card"><div class="card-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div><h3>SEO</h3><p>Make sure your new site can actually be found in search.</p></a>
+        <a href="#performance-optimization" class="card"><div class="card-icon"><i class="fa-solid fa-gauge-high"></i></div><h3>Performance Optimization</h3><p>Tune Core Web Vitals for a faster, smoother experience.</p></a>
       </div>
     </div>
   </div>

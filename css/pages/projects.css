@@ -30,3 +30,76 @@
 @media (max-width:480px){
   .case-meta{grid-template-columns:minmax(0, 1fr); gap:12px;}
 }
+
+/* ---------------------------------------------------------------------------
+   Demo library ("What We Build"). Scoped to the Projects page: every rule is
+   prefixed .pf- and no existing class is redefined, so the featured story and
+   the shared components are untouched. Uses the site's existing tokens only.
+   --------------------------------------------------------------------------- */
+.pf-filter{margin-bottom:var(--sp-2);}
+.pf-filter-scroll{display:flex; gap:10px; flex-wrap:wrap;}
+.pf-btn{cursor:pointer;}
+.pf-btn:focus-visible{outline:3px solid var(--violet); outline-offset:2px;}
+
+.pf-intro{max-width:760px; margin:0 0 var(--sp-4); font-size:15px; line-height:1.65; color:var(--text-secondary);}
+
+.pf-grid{align-items:stretch;}
+.pf-card{display:flex; flex-direction:column;}
+.pf-card .project-card-body{display:flex; flex-direction:column; flex:1;}
+.pf-card-title{font-size:16.5px; margin-bottom:8px;}
+.pf-card-desc{font-size:13.5px; margin-bottom:12px;}
+
+.pf-feats{list-style:none; margin:0 0 14px; padding:0; display:grid; gap:5px;}
+.pf-feats li{position:relative; padding-left:18px; font-size:12.5px; line-height:1.5; color:var(--text-secondary);}
+.pf-feats li::before{content:""; position:absolute; left:0; top:7px; width:6px; height:6px; border-radius:50%; background:var(--cyan);}
+
+/* Pushes the action/status line to the bottom so cards stay aligned. */
+.pf-status,.pf-action{margin-top:auto;}
+.pf-status{font-size:12.5px; color:var(--text-secondary); background:var(--surface); border:1px dashed var(--border);
+  border-radius:var(--radius-sm); padding:8px 12px; display:flex; align-items:center; gap:8px;}
+.pf-status i{color:var(--violet);}
+.pf-action{align-self:flex-start; font-size:13.5px; padding:9px 18px;}
+
+.pf-hidden{display:none !important;}
+.pf-empty{max-width:560px; margin:var(--sp-4) auto 0; text-align:center; font-size:14.5px; color:var(--text-secondary);}
+
+@media (max-width:768px){
+  /* One comfortable row that scrolls sideways instead of nine stacked rows.
+     Buttons keep their full tap target and snap into place. */
+  /* -16px cancels the container's 16px padding at this breakpoint exactly, so
+     the strip runs edge to edge without widening the page. The vertical
+     padding leaves room for the focus outline inside the scroll container. */
+  .pf-filter{margin-left:-16px; margin-right:-16px; padding:6px 16px 12px;
+    overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
+  .pf-filter::-webkit-scrollbar{display:none;}
+  .pf-filter-scroll{flex-wrap:nowrap; scroll-snap-type:x proximity;}
+  .pf-btn{flex:0 0 auto; scroll-snap-align:start;}
+}
+
+/* Service index shown in the All Demos view.
+   These reuse the demo card component (.project-card, .mock-wrap,
+   .mock-browser, .tag) so the index matches this page instead of the home
+   page's icon tiles. Only the button reset and the footer line are new. */
+.pf-cat-card{padding:0; text-align:left; width:100%; font:inherit; color:inherit;
+  background:#fff; cursor:pointer; appearance:none;}
+.pf-cat-card:focus-visible{outline:3px solid var(--violet); outline-offset:2px;}
+/* The inner elements are spans inside a <button>, so give them back the
+   block/flex display the div version had. */
+.pf-cat-card .mock-wrap,
+.pf-cat-card .mock-browser{display:block;}
+.pf-cat-card .project-card-body{display:flex; flex-direction:column; flex:1;}
+.pf-cat-card .tag i{margin-right:6px;}
+.pf-cat-name{display:block; font-family:var(--font-display); font-weight:700; color:var(--navy); line-height:1.35;}
+.pf-cat-text{display:block;}
+.pf-cat-foot{margin-top:auto; padding-top:4px; font-size:12.5px; font-weight:700; color:var(--violet);}
+.pf-cat-foot i{margin-left:6px; transition:transform 0.3s var(--ease);}
+.pf-cat-card:hover .pf-cat-foot i{transform:translateX(4px);}
+@media (prefers-reduced-motion:reduce){
+  .pf-cat-foot i{transition:none;}
+}
+
+/* .filter-btn transitions `all`, which includes outline-width, so the keyboard
+   focus ring faded in over 250ms instead of appearing at once. Limit the
+   transition to the colour properties that actually need it; the hover and
+   active states look identical, the focus ring is now immediate. */
+.pf-btn{transition-property: background-color, color, border-color;}

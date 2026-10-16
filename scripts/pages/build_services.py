@@ -18,7 +18,8 @@ else changes.
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from build_site import page, picture
+from build_site import (page, picture, PUBLIC_SERVICE_SLUGS, WEBSITE_ONLY_MODE,
+                        WEBSITE_SUBSERVICES)
 
 SCHEMA = '''<script type="application/ld+json">
 {
@@ -63,9 +64,7 @@ def service_block(anchor, eyebrow, title, desc, items, image_name, image_alt, ic
 
 # (anchor, eyebrow, title, description, capabilities, image, folder, alt, icon,
 #  cta label, cta href)
-# Only Website Development has a dedicated page so far. The other seven CTAs
-# point at their own section here until their pages are built — one href edit
-# each when that happens.
+# All eight services now have a dedicated page; each CTA links straight to it.
 SERVICES = [
     ("website-development", "01 · Build", "Website Development",
      "Professional websites for businesses, companies and brands — from landing pages and portfolios to complete corporate websites.",
@@ -83,7 +82,7 @@ SERVICES = [
      "web_application_development", "assets/images/projects",
      "Illustration representing a browser-based business application",
      "fa-solid fa-table-columns",
-     "Explore Web Applications", "services.html#web-applications"),
+     "Explore Web Applications", "service-web-applications.html"),
 
     ("mobile-applications", "03 · Reach", "Mobile Applications",
      "Mobile applications built around a business service — for customers, for field teams, or for staff who work away from a desk.",
@@ -92,7 +91,7 @@ SERVICES = [
      "mobile_portrait", "assets/images/projects",
      "Illustration of a business application shown on a mobile phone",
      "fa-solid fa-mobile-screen",
-     "Explore Mobile Solutions", "services.html#mobile-applications"),
+     "Explore Mobile Solutions", "service-mobile-applications.html"),
 
     ("desktop-applications", "04 · Equip", "Desktop Applications",
      "Software installed on the computers your team already uses, built for one job and able to work without a connection.",
@@ -101,7 +100,7 @@ SERVICES = [
      "desktop", "assets/images/projects",
      "Illustration of business software running on a desktop computer",
      "fa-solid fa-desktop",
-     "Explore Desktop Software", "services.html#desktop-applications"),
+     "Explore Desktop Software", "service-desktop-applications.html"),
 
     ("custom-software", "05 · Tailor", "Custom Software",
      "For processes no off-the-shelf product fits. Software designed around how your business actually works, rather than the other way round.",
@@ -110,7 +109,7 @@ SERVICES = [
      "mission", "assets/images/about",
      "Abstract illustration representing purpose-built software",
      "fa-solid fa-code",
-     "Explore Custom Software", "services.html#custom-software"),
+     "Explore Custom Software", "service-custom-software.html"),
 
     ("saas-products", "06 · Scale", "SaaS Products",
      "Cloud-based products many customers can sign up for and use online, each with their own account and their own data kept separate.",
@@ -119,7 +118,7 @@ SERVICES = [
      "enterprise_website_framework", "assets/images/projects",
      "Abstract illustration representing a cloud-based software platform",
      "fa-solid fa-cloud",
-     "Explore SaaS Solutions", "services.html#saas-products"),
+     "Explore SaaS Solutions", "service-saas-products.html"),
 
     ("ai-automation", "07 · Automate", "AI &amp; Automation",
      "Practical automation and AI applied to specific tasks — less retyping, less chasing, less copying between systems.",
@@ -128,7 +127,7 @@ SERVICES = [
      "technology-stack-network", "assets/images/technology",
      "Illustration of connected systems representing automated workflows",
      "fa-solid fa-robot",
-     "Explore AI Solutions", "services.html#ai-automation"),
+     "Explore AI Solutions", "service-ai-automation.html"),
 
     ("software-maintenance", "08 · Sustain", "Software Maintenance",
      "Software stays useful only if it keeps up. Ongoing support, fixes and improvements for websites and applications alike.",
@@ -137,17 +136,79 @@ SERVICES = [
      "website_maintenance", "assets/images/services",
      "Illustration representing ongoing software maintenance and monitoring",
      "fa-solid fa-screwdriver-wrench",
-     "Explore Maintenance Services", "services.html#software-maintenance"),
+     "Explore Maintenance Services", "service-software-maintenance.html"),
 ]
+
+# Only services marked public in the SERVICE_REGISTRY are rendered here.
+# The hidden ones keep their full data in SERVICES above, untouched, ready
+# to reappear the moment their registry flag is set back to True.
+VISIBLE = [row for row in SERVICES if row[0] in PUBLIC_SERVICE_SLUGS]
 
 blocks = "\n".join(
     service_block(anchor, eyebrow, title, desc, items, img, alt, icon, cta_label, cta_href,
                   folder=folder, reverse=(i % 2 == 1))
     for i, (anchor, eyebrow, title, desc, items, img, folder, alt, icon, cta_label, cta_href)
-    in enumerate(SERVICES))
+    in enumerate(VISIBLE))
 
 quicknav = "\n".join(
-    f'        <a href="#{anchor}">{title}</a>' for anchor, _e, title, *_rest in SERVICES)
+    f'        <a href="#{anchor}">{title}</a>' for anchor, _e, title, *_rest in VISIBLE)
+
+# A pill row of one is noise, so it only renders with more than one service.
+quicknav_block = (
+    '      <div class="service-quicknav" data-reveal>\n' + quicknav + '\n      </div>'
+    if len(VISIBLE) > 1 else "")
+
+# In website-only mode the page would otherwise carry a single block of
+# content. The website sub-offerings are summarised here as compact cards
+# that link into their sections on the dedicated Website Development page,
+# so the overview stays useful without duplicating that page wholesale.
+if WEBSITE_ONLY_MODE:
+    _cards = "\n".join(
+        '        <a href="%s" class="card"><div class="card-icon"><i class="%s"></i></div>'
+        '<h3>%s</h3><p>%s.</p></a>' % (href, icon, label, blurb)
+        for icon, label, blurb, href in WEBSITE_SUBSERVICES[1:])
+    website_offerings = (
+        '\n  <div class="section section-alt">\n'
+        '    <div class="container">\n'
+        '      <div class="section-head center" data-reveal>\n'
+        '        <h2>What a website project can include</h2>\n'
+        '        <p style="margin:0 auto;">Each of these is covered in detail on the '
+        'Website Development page.</p>\n'
+        '      </div>\n'
+        '      <div class="grid-4" data-reveal>\n' + _cards + '\n'
+        '      </div>\n'
+        '    </div>\n'
+        '  </div>\n\n')
+else:
+    website_offerings = ""
+
+# Visible wording tracks the registry: the page must describe what is
+# actually on offer, not the full eight-service catalogue.
+if WEBSITE_ONLY_MODE:
+    hero_h1 = "Websites built for how your business needs to be found"
+    hero_lede = ("Business, corporate, landing page and portfolio websites &mdash; with the "
+                 "maintenance, SEO and performance work that keeps them earning their place "
+                 "after launch.")
+    hero_cta = "Explore Website Development"
+    cta_h2 = "Ready to start your website project?"
+    cta_p = ("Tell us what your business needs from its website and we'll come back with a "
+             "realistic scope &mdash; no obligation.")
+    seo_title = "Website Development Services in Chennai | DeepAbi Innovations"
+    seo_desc = ("Professional website development in Chennai \u2014 business, corporate, landing "
+                "page and portfolio websites, with ongoing maintenance, SEO and performance "
+                "optimization.")
+else:
+    hero_h1 = "Everything you need for a high-performing digital presence"
+    hero_lede = ("Eight focused service lines covering the full lifecycle of your website or "
+                 "product &mdash; from first pixel to long-term performance.")
+    hero_cta = "Explore Services"
+    cta_h2 = "Not sure which service fits?"
+    cta_p = ("Tell us about your project and we'll recommend the right starting point "
+             "&mdash; no obligation.")
+    seo_title = "Software Development Services in Chennai | DeepAbi Innovations"
+    seo_desc = ("Website development, web and mobile applications, custom software, SaaS, AI "
+                "automation and software maintenance \u2014 built around how your business "
+                "actually works.")
 
 body = f'''
   <div class="page-header page-header-gradient services-hero">
@@ -158,11 +219,11 @@ body = f'''
     <div class="container services-hero-grid">
       <div>
         <span class="eyebrow gold">Our Services</span>
-        <h1>Everything you need for a high-performing digital presence</h1>
-        <p>Eight focused service lines covering the full lifecycle of your website or product &mdash; from first pixel to long-term performance.</p>
+        <h1>{hero_h1}</h1>
+        <p>{hero_lede}</p>
         <div class="services-hero-actions">
           <a href="contact.html" class="btn btn-accent btn-lg">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-          <a href="#website-development" class="btn btn-secondary btn-lg services-hero-btn-outline">Explore Services</a>
+          <a href="#website-development" class="btn btn-secondary btn-lg services-hero-btn-outline">{hero_cta}</a>
         </div>
       </div>
       <div class="services-hero-visual">
@@ -174,18 +235,16 @@ body = f'''
 
   <div class="section" style="padding-bottom:0;">
     <div class="container">
-      <div class="service-quicknav" data-reveal>
-{quicknav}
-      </div>
+{quicknav_block}
 {blocks}
     </div>
   </div>
 
-  <div class="section">
+{website_offerings}  <div class="section">
     <div class="container">
       <div class="cta-section" data-reveal>
-        <h2>Not sure which service fits?</h2>
-        <p>Tell us about your project and we'll recommend the right starting point &mdash; no obligation.</p>
+        <h2>{cta_h2}</h2>
+        <p>{cta_p}</p>
         <a href="contact.html" class="btn btn-accent">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
@@ -195,8 +254,8 @@ body = f'''
 page(
     filename="services.html",
     active="services",
-    title="Software Development Services in Chennai | DeepAbi Innovations",
-    description="Website development, web and mobile applications, custom software, SaaS, AI automation and software maintenance — built around how your business actually works.",
+    title=seo_title,
+    description=seo_desc,
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/services.css">',
     schema=SCHEMA,

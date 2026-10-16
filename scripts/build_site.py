@@ -26,9 +26,18 @@ TAGLINE_THIRD = "Engineering Digital Excellence"
 
 # ---------------- Contact ----------------
 # Single source of truth for every contact detail rendered across the site.
-# EMAIL stays as an alias for the primary address so existing imports keep working.
-EMAIL_PRIMARY = "hello@deepabi.com"      # public-facing business email
-EMAIL_SECONDARY = "deepabi.tech@gmail.com"  # technical contact
+#
+# TWO addresses, with different jobs. Do not collapse them into one.
+#   EMAIL_PRIMARY   - the public business address. Used for every general
+#                     enquiry CTA, the floating contact button, the top bar,
+#                     the mobile menu and the primary contact metadata.
+#   EMAIL_SECONDARY - the approved technical address. Used where a technical
+#                     contact is intended: the footer contact list and the
+#                     Contact page's email card.
+# EMAIL is kept as an alias of EMAIL_PRIMARY so existing call sites keep
+# working; new code should name the address it means.
+EMAIL_PRIMARY = "hello@deepabi.com"          # public / general enquiries
+EMAIL_SECONDARY = "deepabi.tech@gmail.com"   # technical contact
 EMAIL = EMAIL_PRIMARY
 PHONE_1_DISPLAY = "+91 89460 97125"      # primary
 PHONE_1_TEL = "+918946097125"
@@ -62,26 +71,162 @@ NAV_ITEMS = [
     ("contact", "contact.html", "Contact"),
 ]
 
-# ---------------- Services mega menu ----------------
-# (icon, label, short blurb, href). Single source of truth for the navbar
-# dropdown — repoint an item at a dedicated service page by editing its
-# href here; no other file needs to change.
-SERVICES_MENU = [
-    ("fa-solid fa-window-maximize", "Website Development", "Business, corporate and portfolio sites", "services.html#website-development"),
-    ("fa-solid fa-table-columns", "Web Applications", "Dashboards, portals and business systems", "services.html#web-applications"),
-    ("fa-solid fa-mobile-screen", "Mobile Applications", "Apps built around your services", "services.html#mobile-applications"),
-    ("fa-solid fa-desktop", "Desktop Applications", "Internal tools and desktop software", "services.html#desktop-applications"),
-    ("fa-solid fa-code", "Custom Software", "Built around your exact process", "services.html#custom-software"),
-    ("fa-solid fa-cloud", "SaaS Products", "Cloud platforms with user accounts", "services.html#saas-products"),
-    ("fa-solid fa-robot", "AI &amp; Automation", "Less repetitive work, smarter workflows", "services.html#ai-automation"),
-    ("fa-solid fa-screwdriver-wrench", "Software Maintenance", "Support, updates and improvements", "services.html#software-maintenance"),
+# ===========================================================================
+# SERVICE REGISTRY  —  the single source of truth for service visibility
+# ===========================================================================
+# Every service DeepAbi has built content for lives here. `public` decides
+# whether it appears anywhere on the public website: navigation, the Services
+# page, the home "What We Build" grid, the Projects demo categories, the
+# Contact form's service selector, related-service links, structured data and
+# the sitemap all derive from this list. Nothing is deleted when a service is
+# hidden — its generator, its dedicated page, its demos and its assets stay in
+# the project exactly as they are, and its page keeps working at its URL.
+#
+# TO RESTORE A SERVICE: set its "public" to True and rebuild every page
+# (see docs/BUILD.md). To restore all eight, set them all to True.
+#
+#   slug        the service identifier, used as the page anchor, the demo
+#               category key and the dedicated page filename suffix
+#   label       display name (may contain HTML entities, e.g. &amp;)
+#   icon        Font Awesome class
+#   menu_blurb  one-line description used in the navbar mega menu
+#   page        the dedicated page for this service
+#   contact     the label shown in the Contact form's service selector
+#   public      whether the service is currently offered publicly
+# ---------------------------------------------------------------------------
+SERVICE_REGISTRY = [
+    {"slug": "website-development", "label": "Website Development",
+     "icon": "fa-solid fa-window-maximize",
+     "menu_blurb": "Business, corporate and portfolio sites",
+     "page": "service-website-development.html",
+     "footer": True,
+     "contact": "Website Development", "public": True},
+
+    {"slug": "web-applications", "label": "Web Applications",
+     "icon": "fa-solid fa-table-columns",
+     "menu_blurb": "Dashboards, portals and business systems",
+     "page": "service-web-applications.html",
+     "footer": True,
+     "contact": "Web Applications", "public": False},
+
+    {"slug": "mobile-applications", "label": "Mobile Applications",
+     "icon": "fa-solid fa-mobile-screen",
+     "menu_blurb": "Apps built around your services",
+     "page": "service-mobile-applications.html",
+     "footer": True,
+     "contact": "Mobile Applications", "public": False},
+
+    {"slug": "desktop-applications", "label": "Desktop Applications",
+     "icon": "fa-solid fa-desktop",
+     "menu_blurb": "Internal tools and desktop software",
+     "page": "service-desktop-applications.html",
+     "contact": "Desktop Applications", "public": False},
+
+    {"slug": "custom-software", "label": "Custom Software",
+     "icon": "fa-solid fa-code",
+     "menu_blurb": "Built around your exact process",
+     "page": "service-custom-software.html",
+     "footer": True,
+     "contact": "Custom Software", "public": False},
+
+    {"slug": "saas-products", "label": "SaaS Products",
+     "icon": "fa-solid fa-cloud",
+     "menu_blurb": "Cloud platforms with user accounts",
+     "page": "service-saas-products.html",
+     "contact": "SaaS Products", "public": False},
+
+    {"slug": "ai-automation", "label": "AI &amp; Automation",
+     "icon": "fa-solid fa-robot",
+     "menu_blurb": "Less repetitive work, smarter workflows",
+     "page": "service-ai-automation.html",
+     "contact": "AI &amp; Automation", "public": False},
+
+    {"slug": "software-maintenance", "label": "Software Maintenance",
+     "icon": "fa-solid fa-screwdriver-wrench",
+     "menu_blurb": "Support, updates and improvements",
+     "page": "service-software-maintenance.html",
+     "contact": "Software Maintenance", "public": False},
+]
+
+ALL_SERVICE_SLUGS = [s["slug"] for s in SERVICE_REGISTRY]
+PUBLIC_SERVICES = [s for s in SERVICE_REGISTRY if s["public"]]
+PUBLIC_SERVICE_SLUGS = [s["slug"] for s in PUBLIC_SERVICES]
+HIDDEN_SERVICE_SLUGS = [s["slug"] for s in SERVICE_REGISTRY if not s["public"]]
+
+# True when Website Development is the only public service. This is DERIVED,
+# not a separate switch: make any other service public and the site returns to
+# its multi-service presentation automatically.
+WEBSITE_ONLY_MODE = PUBLIC_SERVICE_SLUGS == ["website-development"]
+
+
+def is_service_public(slug):
+    """Used by the service-page generator to decide noindex, and by any
+    generator that needs to filter its own content by service."""
+    return slug in PUBLIC_SERVICE_SLUGS
+
+
+def service_page(slug):
+    for s in SERVICE_REGISTRY:
+        if s["slug"] == slug:
+            return s["page"]
+    raise KeyError(slug)
+
+
+# ---------------- Website sub-services ----------------
+# The offerings that live INSIDE Website Development, as sections of
+# service-website-development.html. In website-only mode these replace the
+# eight top-level services in the navigation and on the home page, so the
+# menus stay full and useful instead of collapsing to a single item. Each
+# anchor matches a section id on that page.
+WEBSITE_SUBSERVICES = [
+    ("fa-solid fa-window-maximize", "Website Development", "Complete websites for businesses and brands", "service-website-development.html"),
+    ("fa-solid fa-rocket", "Landing Pages", "Single-purpose pages built around one goal", "service-website-development.html#landing-pages"),
+    ("fa-solid fa-building", "Corporate Websites", "Structured sites for multi-department organizations", "service-website-development.html#corporate-websites"),
+    ("fa-solid fa-store", "Business Websites", "A credible presence for service businesses", "service-website-development.html#business-websites"),
+    ("fa-solid fa-images", "Portfolio Websites", "Image-forward sites for studios and professionals", "service-website-development.html#portfolio-websites"),
+    ("fa-solid fa-screwdriver-wrench", "Website Maintenance", "Updates, security and monitoring after launch", "service-website-development.html#website-maintenance"),
+    ("fa-solid fa-magnifying-glass-chart", "SEO", "Technical and on-page groundwork to be found", "service-website-development.html#seo"),
+    ("fa-solid fa-gauge-high", "Performance Optimization", "Core Web Vitals and faster page loads", "service-website-development.html#performance-optimization"),
 ]
 
 
+def services_menu_items():
+    """(icon, label, blurb, href) for every navigation surface.
+
+    Website-only mode shows the website sub-services; otherwise it shows one
+    entry per public top-level service. Both the desktop mega menu, the mobile
+    accordion and the footer services column read from this one function, so
+    they can never drift apart.
+    """
+    if WEBSITE_ONLY_MODE:
+        return list(WEBSITE_SUBSERVICES)
+    return [(s["icon"], s["label"], s["menu_blurb"], s["page"]) for s in PUBLIC_SERVICES]
+
+
+# Menu wording follows what is actually on offer.
+if WEBSITE_ONLY_MODE:
+    SERVICES_MENU_TITLE = "Website Development"
+    SERVICES_MENU_SUBTITLE = "Professional websites for businesses, brands and organizations."
+    SERVICES_MENU_FOOT = "Looking for a website built around your business?"
+    SERVICES_MENU_CTA = "Explore Website Services"
+else:
+    SERVICES_MENU_TITLE = "Software Solutions"
+    SERVICES_MENU_SUBTITLE = "From digital experiences to intelligent software systems."
+    SERVICES_MENU_FOOT = "Need something built around your business?"
+    SERVICES_MENU_CTA = "Explore All Services"
+
+# Kept as a module-level name because existing call sites import it.
+SERVICES_MENU = services_menu_items()
+
+
 def head(title, description, canonical_path, og_image="assets/images/backgrounds/og-social-banner.jpg",
-         extra_css="", schema="", extra_keywords=""):
+         extra_css="", schema="", extra_keywords="", noindex=False):
     canonical = f"{SITE_URL}/{canonical_path}" if canonical_path else SITE_URL
     keywords = SEO_KEYWORDS + (f", {extra_keywords}" if extra_keywords else "")
+    # "follow" is kept so crawlers still traverse the page's links, and the
+    # page is never blocked in robots.txt - a blocked page can't be read, so
+    # its noindex would never be seen.
+    robots = "noindex, follow" if noindex else "index, follow"
     return f'''<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>{title}</title>
@@ -89,7 +234,7 @@ def head(title, description, canonical_path, og_image="assets/images/backgrounds
 <meta name="keywords" content="{keywords}" />
 <meta name="author" content="DeepAbi" />
 <link rel="canonical" href="{canonical}" />
-<meta name="robots" content="index, follow" />
+<meta name="robots" content="{robots}" />
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
@@ -143,22 +288,22 @@ def _services_mega(active):
         <a href="services.html"{cls} id="servicesTrigger" aria-haspopup="true" aria-expanded="false" aria-controls="servicesMega">Services <i class="fa-solid fa-chevron-down mega-chev" aria-hidden="true"></i></a>
         <div class="mega" id="servicesMega" role="group" aria-label="Services">
           <div class="mega-head">
-            <h2>Software Solutions</h2>
-            <p>From digital experiences to intelligent software systems.</p>
+            <h2>{SERVICES_MENU_TITLE}</h2>
+            <p>{SERVICES_MENU_SUBTITLE}</p>
           </div>
           <div class="mega-grid">
 {items}
           </div>
           <div class="mega-foot">
-            <p>Need something built around your business?</p>
-            <a href="services.html" class="mega-foot-cta">Explore All Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <p>{SERVICES_MENU_FOOT}</p>
+            <a href="services.html" class="mega-foot-cta">{SERVICES_MENU_CTA} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
           </div>
         </div>
       </div>'''
 
 
 def _services_accordion():
-    """Mobile equivalent: the same eight links as an expandable accordion."""
+    """Mobile equivalent: the same items as an expandable accordion."""
     items = "\n".join(
         f'''        <a href="{href}"><span class="m-acc-ico"><i class="{icon}" aria-hidden="true"></i></span>{title}</a>'''
         for icon, title, desc, href in SERVICES_MENU)
@@ -166,7 +311,7 @@ def _services_accordion():
       <button type="button" class="m-acc-trigger" id="mServicesTrigger" aria-expanded="false" aria-controls="mServicesPanel">Services <i class="fa-solid fa-chevron-down m-acc-chev" aria-hidden="true"></i></button>
       <div class="m-acc-panel" id="mServicesPanel">
 {items}
-        <a href="services.html" class="m-acc-all">Explore All Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        <a href="services.html" class="m-acc-all">{SERVICES_MENU_CTA} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>'''
 
@@ -263,7 +408,33 @@ def contact_fab():
 </div>'''
 
 
+def _footer_service_links(limit=4):
+    """The footer services column.
+
+    Normally the services flagged `footer` in the registry, which preserves the
+    approved four-link column exactly. In website-only mode there is only one
+    such service, so the first few website sub-offerings are listed instead and
+    an All Services row is added - otherwise the column would be a single link.
+    Either way it is derived from the registry, so the footer can never
+    advertise a service the navigation has hidden."""
+    if WEBSITE_ONLY_MODE:
+        entries = services_menu_items()[:limit]
+        add_all = True
+    else:
+        entries = [(x["icon"], x["label"], x["menu_blurb"], x["page"])
+                   for x in PUBLIC_SERVICES if x.get("footer")][:limit]
+        add_all = False
+    rows = [
+        f'          <li><a href="{href}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> {label}</a></li>'
+        for _icon, label, _blurb, href in entries
+    ]
+    if add_all:
+        rows.append('          <li><a href="services.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> All Services</a></li>')
+    return "\n".join(rows)
+
+
 def footer():
+    footer_services = _footer_service_links()
     return f'''<footer>
   <div class="footer-mission">
     <div class="container">
@@ -288,7 +459,7 @@ def footer():
         </div>
       </div>
       <div class="footer-col">
-        <h5>Company</h5>
+        <h3 class="footer-col-title">Company</h3>
         <ul>
           <li><a href="index.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Home</a></li>
           <li><a href="about.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> About</a></li>
@@ -297,16 +468,13 @@ def footer():
         </ul>
       </div>
       <div class="footer-col">
-        <h5>Services</h5>
+        <h3 class="footer-col-title">Services</h3>
         <ul>
-          <li><a href="services.html#website-development"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Website Development</a></li>
-          <li><a href="services.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Web Applications</a></li>
-          <li><a href="services.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Mobile Applications</a></li>
-          <li><a href="services.html"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i> Custom Software</a></li>
+{footer_services}
         </ul>
       </div>
       <div class="footer-col footer-col-contact">
-        <h5>Contact</h5>
+        <h3 class="footer-col-title">Contact</h3>
         <ul>
           <li><a href="mailto:{EMAIL}"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span><em>Email</em>{EMAIL}</span></a></li>
           <li><a href="mailto:{EMAIL_SECONDARY}"><i class="fa-solid fa-envelope" aria-hidden="true"></i><span><em>Technical</em>{EMAIL_SECONDARY}</span></a></li>
@@ -317,7 +485,7 @@ def footer():
       </div>
     </div>
     <div class="footer-bottom">
-      <span>&copy; <span id="year"></span> DeepAbi Technologies. All rights reserved.</span>
+      <span>&copy; <span id="year"></span> DeepAbi Innovations. All rights reserved.</span>
       <span class="legal"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a></span>
     </div>
   </div>
@@ -326,7 +494,7 @@ def footer():
 <div class="toast" id="toast"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span id="toastMsg">Message sent successfully!</span></div>'''
 
 
-def picture(name, alt, w, h, folder, css_class="", loading="lazy", eager=False):
+def picture(name, alt, w, h, folder, css_class="", loading="lazy", eager=False, skip_formats=()):
     """Build a <picture> element with automatic format detection and a strict
     priority order: AVIF > WebP > PNG > JPG/JPEG. Only <source> tags for
     formats that actually exist on disk for this image are emitted, so an
@@ -334,7 +502,12 @@ def picture(name, alt, w, h, folder, css_class="", loading="lazy", eager=False):
     minimal markup. `folder` is the page-scoped asset directory, e.g.
     "assets/images/home". Explicit width/height prevents layout shift;
     `eager=True` marks the hero-priority image (eager load + fetchpriority high),
-    everything else lazy-loads with async decoding."""
+    everything else lazy-loads with async decoding.
+
+    `skip_formats` omits formats that exist on disk but are not wanted for a
+    particular image. It is used for the home hero, where the AVIF encode is
+    larger than the JPEG and would make the largest-paint image heavier rather
+    than lighter."""
     loading_attr = "eager" if eager else loading
     fetchpriority = ' fetchpriority="high"' if eager else ''
     cls = f' class="{css_class}"' if css_class else ''
@@ -346,6 +519,8 @@ def picture(name, alt, w, h, folder, css_class="", loading="lazy", eager=False):
     ]
     found = {}
     for ext, _ in FORMAT_PRIORITY:
+        if ext in skip_formats:
+            continue
         path = _os.path.join(ROOT, folder, ext, f"{name}.{ext}")
         if _os.path.exists(path):
             found[ext] = True
@@ -430,13 +605,14 @@ def art_directed_picture(breakpoints, alt, w, h, folder, css_class="", eager=Fal
 
 def page(filename, active, title, description, body, canonical_path=None,
          extra_css="", extra_js="", og_image="assets/images/backgrounds/og-social-banner.jpg",
-         schema="", body_class="", extra_keywords=""):
+         schema="", body_class="", extra_keywords="", noindex=False):
     canonical_path = canonical_path if canonical_path is not None else filename
     body_attr = f' class="{body_class}"' if body_class else ''
     html = f'''<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
-{head(title, description, canonical_path, og_image, extra_css, schema, extra_keywords)}
+<script>document.documentElement.className=document.documentElement.className.replace('no-js','js');</script>
+{head(title, description, canonical_path, og_image, extra_css, schema, extra_keywords, noindex)}
 </head>
 <body{body_attr}>
 

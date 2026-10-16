@@ -1,6 +1,6 @@
 import sys, os, json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from build_site import page, ROOT, SITE_URL, EMAIL, TAGLINE_SECONDARY
+from build_site import page, is_service_public, ROOT, SITE_URL, EMAIL, TAGLINE_SECONDARY
 
 privacy_body = f'''
   <div class="page-header">
@@ -68,11 +68,19 @@ with open(os.path.join(ROOT, "robots.txt"), "w") as f:
     f.write(robots)
 
 # ---------------- sitemap.xml ----------------
+# Hidden services are left out of the sitemap while their registry flag is
+# False; their pages stay on disk and keep working at their URLs.
 pages = [
     ("", "1.0", "weekly"),
     ("services.html", "0.9", "monthly"),
     ("service-website-development.html", "0.9", "monthly"),
-    ("service-detail.html", "0.8", "monthly"),
+    ("service-web-applications.html", "0.8", "monthly"),
+    ("service-mobile-applications.html", "0.8", "monthly"),
+    ("service-desktop-applications.html", "0.8", "monthly"),
+    ("service-custom-software.html", "0.8", "monthly"),
+    ("service-saas-products.html", "0.8", "monthly"),
+    ("service-ai-automation.html", "0.8", "monthly"),
+    ("service-software-maintenance.html", "0.8", "monthly"),
     ("projects.html", "0.8", "weekly"),
     ("technologies.html", "0.6", "monthly"),
     ("about.html", "0.7", "monthly"),
@@ -80,6 +88,10 @@ pages = [
     ("privacy.html", "0.2", "yearly"),
     ("terms.html", "0.2", "yearly"),
 ]
+
+pages = [row for row in pages
+         if not row[0].startswith("service-")
+         or is_service_public(row[0][len("service-"):-len(".html")])]
 urls = "\n".join(
     f'''  <url>
     <loc>{SITE_URL}/{p}</loc>

@@ -102,7 +102,7 @@ table{width:100%; border-collapse:collapse;}
 .skip-link:focus{left:0;}
 
 /* ---------- Typography ---------- */
-h1,h2,h3,h4,h5{
+h1,h2,h3,h4,h5,h6{
   font-family:var(--font-display);
   font-weight:700;
   letter-spacing:-0.02em;
@@ -354,10 +354,21 @@ body.hero-dark #navbar:not(.scrolled) .menu-toggle{color:#fff;}
   border:1px solid rgba(255,255,255,0.4);
 }
 
-[data-reveal]{opacity:0; transform:translateY(28px); transition:opacity 0.7s var(--ease), transform 0.7s var(--ease);}
-[data-reveal].in{opacity:1; transform:translateY(0);}
-[data-reveal="scale"]{transform:scale(0.94);}
-[data-reveal="scale"].in{transform:scale(1);}
+/* Scroll reveal.
+   The starting opacity:0 is applied ONLY under html.js, a class an inline
+   script in <head> adds. With scripting unavailable or blocked the class is
+   never added, so every [data-reveal] block renders normally instead of
+   staying permanently invisible. js/common.js also force-reveals anything
+   still hidden shortly after load, so a script error cannot blank the page. */
+.js [data-reveal]{opacity:0; transform:translateY(28px); transition:opacity 0.7s var(--ease), transform 0.7s var(--ease);}
+.js [data-reveal].in{opacity:1; transform:translateY(0);}
+.js [data-reveal="scale"]{transform:scale(0.94);}
+.js [data-reveal="scale"].in{transform:scale(1);}
+@media (prefers-reduced-motion: reduce){
+  /* No entrance animation for anyone who asked for less motion: content is
+     simply present. */
+  .js [data-reveal]{opacity:1 !important; transform:none !important; transition:none !important;}
+}
 
 /* ---------- Stats / counters ---------- */
 .stat-strip{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:var(--sp-3);}
@@ -371,7 +382,7 @@ body.hero-dark #navbar:not(.scrolled) .menu-toggle{color:#fff;}
 .testimonial-card p.quote{color:var(--text); font-size:15px; margin-bottom:22px;}
 .testimonial-person{display:flex; align-items:center; gap:12px;}
 .testimonial-person img{width:46px; height:46px; border-radius:50%; object-fit:cover;}
-.testimonial-person h4{font-size:14.5px; margin-bottom:2px;}
+.testimonial-person h3{font-size:14.5px; margin-bottom:2px;}
 .testimonial-person span{font-size:12.5px; color:var(--text-secondary);}
 
 /* ---------- CTA banner ---------- */
@@ -395,8 +406,8 @@ footer{background:var(--navy); color:#B8C4D9; padding:0 0 30px;}
 .footer-grid{display:grid; grid-template-columns:minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr); gap:44px; padding:60px 0 52px; border-bottom:1px solid rgba(255,255,255,0.12);}
 .footer-logo{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:700; font-size:20px; color:#fff; margin-bottom:16px;}
 .footer-grid p{font-size:14.5px; line-height:1.75; max-width:280px; color:#B8C4D9;}
-.footer-col h5{color:#fff; font-size:13.5px; margin-bottom:20px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; position:relative; padding-bottom:12px;}
-.footer-col h5::after{content:''; position:absolute; left:0; bottom:0; width:28px; height:3px; border-radius:3px; background:linear-gradient(90deg, var(--gold), var(--violet));}
+.footer-col .footer-col-title{color:#fff; font-size:13.5px; margin-bottom:20px; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; position:relative; padding-bottom:12px;}
+.footer-col .footer-col-title::after{content:''; position:absolute; left:0; bottom:0; width:28px; height:3px; border-radius:3px; background:linear-gradient(90deg, var(--gold), var(--violet));}
 .footer-col ul li{margin-bottom:14px;}
 .footer-col a{
   font-size:14.5px; color:#B8C4D9; transition:color 0.25s var(--ease), transform 0.25s var(--ease);
@@ -606,7 +617,7 @@ footer{background:var(--navy); color:#B8C4D9; padding:0 0 30px;}
   transform:scale(1.14) translateY(-4px);
 }
 .process-step:hover .process-dot::before{opacity:1;}
-.process-step h4{font-size:16px; margin-bottom:6px; color:var(--navy); letter-spacing:-0.01em;}
+.process-step h3{font-size:16px; margin-bottom:6px; color:var(--navy); letter-spacing:-0.01em;}
 .process-step p{font-size:12.5px;}
 
 /* ---------- Tech chips ---------- */

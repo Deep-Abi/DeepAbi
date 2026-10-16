@@ -74,6 +74,18 @@ function initMobileMenu() {
 function initReveal() {
   const targets = document.querySelectorAll('[data-reveal]');
   if (!targets.length) return;
+
+  const revealAll = () => targets.forEach(el => el.classList.add('in'));
+
+  // Anyone who asked for reduced motion, or any browser without
+  // IntersectionObserver, gets the content immediately rather than an
+  // animation they did not want or a page that never reveals itself.
+  if (!('IntersectionObserver' in window) ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    revealAll();
+    return;
+  }
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -81,8 +93,20 @@ function initReveal() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.15, rootMargin: '0px 0px 10% 0px' });
   targets.forEach(el => observer.observe(el));
+
+  // Failsafe: whatever happens, nothing stays invisible for long. Anything
+  // already inside the viewport is revealed on the next frame (so above-the-
+  // fold content never waits on the observer), and anything still hidden a
+  // few seconds after load is revealed outright.
+  requestAnimationFrame(() => {
+    targets.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight && r.bottom > 0) { el.classList.add('in'); observer.unobserve(el); }
+    });
+  });
+  window.addEventListener('load', () => setTimeout(revealAll, 2500));
 }
 
 /* ---------- Animated counters ---------- */

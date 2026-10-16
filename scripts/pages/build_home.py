@@ -1,7 +1,24 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from build_site import page, picture, MISSION, MISSION_DETAIL, VISION_HEADLINE, VISION_DETAIL, TAGLINE_PRIMARY
+from build_site import (page, picture, PUBLIC_SERVICE_SLUGS, WEBSITE_ONLY_MODE,
+                        WEBSITE_SUBSERVICES)
+from build_site import MISSION, MISSION_DETAIL, VISION_HEADLINE, VISION_DETAIL, TAGLINE_PRIMARY
+
+# Structured data lists only what is publicly offered, so the markup and the
+# visible page agree.
+import json as _json
+if WEBSITE_ONLY_MODE:
+    _knows = ["Website Development", "Business Websites", "Corporate Websites",
+              "Landing Page Development", "Portfolio Websites", "Website Maintenance",
+              "Search Engine Optimization", "Website Performance Optimization"]
+else:
+    _knows = ["Website Development", "Web Application Development",
+              "Mobile Application Development", "Desktop Application Development",
+              "Custom Software Development", "SaaS Product Development",
+              "AI and Business Automation", "Software Maintenance and Support"]
+# Indented to sit cleanly inside the surrounding JSON-LD block.
+KNOWS_ABOUT = _json.dumps(_knows, indent=2).replace('\n', '\n  ')
 
 SCHEMA = '''<script type="application/ld+json">
 {
@@ -24,16 +41,7 @@ SCHEMA = '''<script type="application/ld+json">
     { "@type": "Place", "name": "Anna Nagar, Chennai" },
     { "@type": "City", "name": "Chennai" }
   ],
-  "knowsAbout": [
-    "Website Development",
-    "Web Application Development",
-    "Mobile Application Development",
-    "Desktop Application Development",
-    "Custom Software Development",
-    "SaaS Product Development",
-    "AI and Business Automation",
-    "Software Maintenance and Support"
-  ],
+  "knowsAbout": __KNOWS_ABOUT__,
   "email": "hello@deepabi.com",
   "telephone": ["+918946097125", "+919025548401"],
   "sameAs": [
@@ -51,22 +59,30 @@ SCHEMA = '''<script type="application/ld+json">
 }
 </script>'''
 
+SCHEMA = SCHEMA.replace('__KNOWS_ABOUT__', KNOWS_ABOUT)
+
+# The home hero is the largest paint on the site. Its AVIF encode is 166KB
+# against 73KB for the JPEG, so AVIF is deliberately not offered for this one
+# image - serving it would make the hero heavier, not lighter.
+HERO_SKIP = ("avif",)
+
 WHAT_WE_BUILD = [
     ("fa-solid fa-window-maximize", "Website Development", "Professional websites for businesses, companies and brands — from landing pages and portfolios to complete corporate websites.", "website-development"),
-    ("fa-solid fa-table-columns", "Web Applications", "Interactive web-based applications, dashboards, portals and business systems built around real operational needs.", None),
-    ("fa-solid fa-mobile-screen", "Mobile Applications", "Custom mobile applications designed around business requirements, user experiences and digital services.", None),
-    ("fa-solid fa-desktop", "Desktop Applications", "Purpose-built desktop software and internal tools for business operations, productivity and specialized workflows.", None),
-    ("fa-solid fa-code", "Custom Software", "Tailored software solutions designed around unique business processes, requirements and operational challenges.", None),
-    ("fa-solid fa-cloud", "SaaS Products", "Cloud-based software products and platforms designed for accessible, scalable and ongoing digital services.", None),
-    ("fa-solid fa-robot", "AI &amp; Automation", "AI-powered solutions and workflow automation designed to reduce repetitive work and improve business efficiency.", None),
-    ("fa-solid fa-screwdriver-wrench", "Software Maintenance", "Ongoing software support, improvements, optimization and maintenance to keep digital products reliable and evolving.", None),
+    ("fa-solid fa-table-columns", "Web Applications", "Interactive web-based applications, dashboards, portals and business systems built around real operational needs.", "web-applications"),
+    ("fa-solid fa-mobile-screen", "Mobile Applications", "Custom mobile applications designed around business requirements, user experiences and digital services.", "mobile-applications"),
+    ("fa-solid fa-desktop", "Desktop Applications", "Purpose-built desktop software and internal tools for business operations, productivity and specialized workflows.", "desktop-applications"),
+    ("fa-solid fa-code", "Custom Software", "Tailored software solutions designed around unique business processes, requirements and operational challenges.", "custom-software"),
+    ("fa-solid fa-cloud", "SaaS Products", "Cloud-based software products and platforms designed for accessible, scalable and ongoing digital services.", "saas-products"),
+    ("fa-solid fa-robot", "AI &amp; Automation", "AI-powered solutions and workflow automation designed to reduce repetitive work and improve business efficiency.", "ai-automation"),
+    ("fa-solid fa-screwdriver-wrench", "Software Maintenance", "Ongoing software support, improvements, optimization and maintenance to keep digital products reliable and evolving.", "software-maintenance"),
 ]
 
 
-def build_card(icon, title, desc, anchor):
-    """anchor=None links to the Services page root until that service has its
-    own section there, so no card ever points at a fragment that doesn't exist."""
-    href = f"services.html#{anchor}" if anchor else "services.html"
+def build_card(icon, title, desc, anchor, href=None):
+    """`anchor` is the service slug; each card links to that service's own
+    dedicated page. anchor=None falls back to the Services overview."""
+    if href is None:
+        href = f"service-{anchor}.html" if anchor else "services.html"
     return f'''<div class="wwb-card" data-reveal>
         <div class="wwb-icon"><i class="{icon}" aria-hidden="true"></i></div>
         <h3>{title}</h3>
@@ -75,7 +91,21 @@ def build_card(icon, title, desc, anchor):
       </div>'''
 
 
-wwb_cards_html = "\n      ".join(build_card(*c) for c in WHAT_WE_BUILD)
+# Only services marked public in the SERVICE_REGISTRY reach the grid. In
+# website-only mode the eight website sub-offerings take their place, so the
+# grid stays full instead of collapsing to a single card and leaving a gap.
+if WEBSITE_ONLY_MODE:
+    _cards = [(icon, label, blurb + ".", href)
+              for icon, label, blurb, href in WEBSITE_SUBSERVICES]
+    wwb_cards_html = "\n      ".join(
+        build_card(icon, title, desc, None, href=href) for icon, title, desc, href in _cards)
+    wwb_lede = ("Professional websites for businesses, brands and organizations &mdash; built to "
+                "load fast, read well on a phone and make getting in touch obvious.")
+else:
+    _visible = [c for c in WHAT_WE_BUILD if c[3] in PUBLIC_SERVICE_SLUGS]
+    wwb_cards_html = "\n      ".join(build_card(*c) for c in _visible)
+    wwb_lede = ("From professional websites to custom software, DeepAbi builds digital solutions "
+                "designed around real business needs.")
 
 RESPONSIVE_FEATURES = [
     ("fa-solid fa-mobile-screen-button", "Mobile-First Layouts", "Designed for the smallest screen first, then scaled up with intention."),
@@ -88,7 +118,7 @@ RESPONSIVE_FEATURES = [
 def responsive_feature(icon, title, desc):
     return f'''<div class="rf-item">
         <div class="rf-icon"><i class="{icon}" aria-hidden="true"></i></div>
-        <div class="rf-text"><h4>{title}</h4><p>{desc}</p></div>
+        <div class="rf-text"><h3>{title}</h3><p>{desc}</p></div>
       </div>'''
 
 
@@ -104,7 +134,7 @@ def testimonial_slide(active, avatar, alt, quote, name, role):
               <p class="quote">"{quote}"</p>
               <div class="testimonial-person">
                 {picture(avatar, alt, 56, 56, "assets/images/testimonials", css_class="avatar-img")}
-                <div><h4>{name}</h4><span>{role}</span></div>
+                <div><h3>{name}</h3><span>{role}</span></div>
               </div>
             </div>
           </div>'''
@@ -120,6 +150,22 @@ TESTIMONIALS = [
 testimonial_slides_html = "\n          ".join(
     testimonial_slide(i == 0, *t) for i, t in enumerate(TESTIMONIALS)
 )
+
+# Visible hero copy and the meta description describe what is actually on
+# offer. Both revert with the registry flags.
+if WEBSITE_ONLY_MODE:
+    hero_sub = ("We build modern, scalable websites &mdash; from a single landing page to a "
+                "complete corporate site &mdash; designed to load fast, read well on a phone "
+                "and bring you enquiries.")
+    seo_desc = ("DeepAbi Innovations builds professional business, corporate, landing page and "
+                "portfolio websites for businesses in Mogappair and across Chennai, with "
+                "maintenance, SEO and performance support.")
+else:
+    hero_sub = ("We build modern, scalable and intelligent digital products &mdash; from custom "
+                "website development to enterprise web applications &mdash; that help businesses "
+                "grow faster.")
+    seo_desc = ("DeepAbi Innovations builds websites, web and mobile apps, custom software, SaaS "
+                "and automation solutions for businesses in Mogappair and across Chennai.")
 
 body = f'''
   <!-- ============ HERO ============ -->
@@ -138,7 +184,7 @@ body = f'''
           <span id="typingTarget" class="grad-text" aria-hidden="true"></span><span class="typing-cursor" aria-hidden="true">|</span>
           <span class="sr-only">Building Intelligent Digital Solutions</span>
         </h1>
-        <p class="hero-sub">We build modern, scalable and intelligent digital products &mdash; from custom website development to enterprise web applications &mdash; that help businesses grow faster.</p>
+        <p class="hero-sub">{hero_sub}</p>
 
         <div class="hero-actions">
           <a href="contact.html" class="btn btn-accent">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
@@ -151,7 +197,8 @@ body = f'''
         {picture(
             "deepabi-concept",
             "Premium illustration of the DeepAbi brand concept, symbolizing economic empowerment and ambition through connected innovation and growth",
-            700, 641, "assets/images/home", css_class="hero-illustration-img", eager=True
+            1024, 1536, "assets/images/home", css_class="hero-illustration-img", eager=True,
+            skip_formats=HERO_SKIP
         )}
       </div>
     </div>
@@ -161,13 +208,13 @@ body = f'''
         <div class="hero-mv-card">
           <div class="hero-mv-icon"><i class="fa-solid fa-bullseye" aria-hidden="true"></i></div>
           <span class="hero-mv-label">Mission</span>
-          <h3>{MISSION}</h3>
+          <h2 class="hero-mv-title">{MISSION}</h2>
           <p>{MISSION_DETAIL}</p>
         </div>
         <div class="hero-mv-card">
           <div class="hero-mv-icon"><i class="fa-solid fa-star" aria-hidden="true"></i></div>
           <span class="hero-mv-label">Vision</span>
-          <h3>{VISION_HEADLINE}</h3>
+          <h2 class="hero-mv-title">{VISION_HEADLINE}</h2>
           <p>{VISION_DETAIL}</p>
         </div>
       </div>
@@ -192,9 +239,9 @@ body = f'''
   <section class="section" id="what-we-build">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow cyan">What We Do</span>
+        <!-- <span class="eyebrow cyan">What We Do</span> -->
         <h2>What We Build</h2>
-        <p style="margin:0 auto;">From professional websites to custom software, DeepAbi builds digital solutions designed around real business needs.</p>
+        <p style="margin:0 auto;">{wwb_lede}</p>
       </div>
       <div class="wwb-grid">
       {wwb_cards_html}
@@ -202,13 +249,13 @@ body = f'''
     </div>
   </section>
 
-  <!-- ============ RESPONSIVE DESIGN SHOWCASE ("Built for Every Screen") ============ -->
+  <!-- ============ RESPONSIVE DESIGN SHOWCASE ("Built & Tested Across All Devices") ============ -->
   <section class="section section-alt">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow gold">Built for Every Screen</span>
-        <h2>Built for Every Screen</h2>
-        <p style="margin:0 auto;">Every DeepAbi build is designed mobile-first and tested across desktop, tablet, and mobile — so your site looks intentional on every screen, not just the one on your desk.</p>
+        <!-- <span class="eyebrow gold">Built &amp; Tested Across All Devices</span> -->
+        <h2>Built &amp; Tested Across All Devices</h2>
+        <p style="margin:0 auto;">Our websites are carefully designed, tested and optimized across desktop, laptop, tablet and mobile devices to deliver a seamless user experience on every screen.</p>
       </div>
 
       <div class="device-stack device-stack-large" id="deviceStack" data-reveal="scale" role="group" aria-label="Showcase cycling through desktop, tablet, and mobile presentations of the DeepAbi brand" aria-live="off">
@@ -246,7 +293,7 @@ body = f'''
   <section class="section" id="why-deepabi">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow">Why Choose Us</span>
+        <!-- <span class="eyebrow">Why Choose Us</span> -->
         <h2>Why DeepAbi</h2>
         <p style="margin:0 auto;">DeepAbi is a professional website development and software company built around reliability, transparency, and measurable results.</p>
       </div>
@@ -265,18 +312,18 @@ body = f'''
   <section class="section section-alt">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow">Our Process</span>
+        <!-- <span class="eyebrow">Our Process</span> -->
         <h2>How We Work</h2>
         <p style="margin:0 auto;">Seven stages take your project from first conversation to a fully supported, live product.</p>
       </div>
       <div class="process-track" data-reveal>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="process-num">01</span></div><h4>Discover</h4><p>Goals &amp; audience</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span class="process-num">02</span></div><h4>Research</h4><p>Market analysis</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i><span class="process-num">03</span></div><h4>Design</h4><p>Wireframes &amp; UI</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-code" aria-hidden="true"></i><span class="process-num">04</span></div><h4>Development</h4><p>Scalable build</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span class="process-num">01</span></div><h3>Discover</h3><p>Goals &amp; audience</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><span class="process-num">02</span></div><h3>Research</h3><p>Market analysis</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-pen-ruler" aria-hidden="true"></i><span class="process-num">03</span></div><h3>Design</h3><p>Wireframes &amp; UI</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-code" aria-hidden="true"></i><span class="process-num">04</span></div><h3>Development</h3><p>Scalable build</p></div>
         <div class="process-step"><div class="process-dot"><i class="fa-solid fa-vial" aria-hidden="true"></i><span class="process-num">05</span></div><h4>Testing</h4><p>Cross-device QA</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-rocket" aria-hidden="true"></i><span class="process-num">06</span></div><h4>Deployment</h4><p>Production launch</p></div>
-        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><span class="process-num">07</span></div><h4>Maintenance</h4><p>Ongoing support</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-rocket" aria-hidden="true"></i><span class="process-num">06</span></div><h3>Deployment</h3><p>Production launch</p></div>
+        <div class="process-step"><div class="process-dot"><i class="fa-solid fa-screwdriver-wrench" aria-hidden="true"></i><span class="process-num">07</span></div><h3>Maintenance</h3><p>Ongoing support</p></div>
       </div>
     </div>
   </section>
@@ -286,17 +333,17 @@ body = f'''
     <div class="container">
       <div class="featured-project" data-reveal>
         <div class="featured-visual">
-          {picture("featured-cardsession-platform", "Abstract mockup illustration representing the Card Session website interface", 640, 434, "assets/images/projects")}
+          {picture("featured-cardsession-platform", "Abstract mockup illustration of a commercial hardware and industrial supply website", 640, 434, "assets/images/projects")}
         </div>
         <div class="featured-copy">
-          <span class="badge badge-mint"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Launched 2024</span>
-          <h2 style="margin:14px 0;">Featured Success Story: Card Session</h2>
-          <p>Card Session is a payments-focused web application platform we designed and built end-to-end &mdash; from information architecture through a production launch.</p>
+          <span class="badge badge-mint"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Launched 2025</span>
+          <h2 style="margin:14px 0;">Featured Success Story: Commercial Hardware &amp; Industrial Supply</h2>
+          <p>A corporate commercial website built end-to-end for a hardware, electrical, electronics and industrial tools supplier &mdash; from business information architecture through a production launch in 4 weeks.</p>
           <ul class="featured-list">
-            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Custom web application front end</li>
-            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Technical SEO &amp; analytics setup</li>
-            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Core Web Vitals performance tuning</li>
-            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Ongoing maintenance &amp; monitoring</li>
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Responsive commercial website design</li>
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Product &amp; category showcase</li>
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Business information architecture</li>
+            <li><i class="fa-solid fa-check" aria-hidden="true"></i> Contact &amp; enquiry integration</li>
           </ul>
           <a href="projects.html" class="btn btn-primary">View Our Work <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         </div>
@@ -308,7 +355,7 @@ body = f'''
   <section class="section section-alt">
     <div class="container">
       <div class="section-head center" data-reveal>
-        <span class="eyebrow">Client Feedback</span>
+        <!-- <span class="eyebrow">Client Feedback</span> -->
         <h2>Testimonials</h2>
         <p style="margin:0 auto;">What clients say about working with us.</p>
       </div>
@@ -339,12 +386,11 @@ page(
     filename="index.html",
     active="home",
     title="DeepAbi Innovations | Software Development Company in Chennai",
-    description="DeepAbi Innovations builds websites, web and mobile apps, custom software, SaaS and automation solutions for businesses in Mogappair and across Chennai.",
+    description=seo_desc,
     body=body,
     canonical_path="",
     extra_css='<link rel="stylesheet" href="css/pages/home.css">',
     extra_js='<script src="js/pages/home.js"></script>',
     schema=SCHEMA,
     body_class="hero-dark",
-    extra_keywords="website developers near me, hire website development company, business growth website",
 )

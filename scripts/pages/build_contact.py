@@ -1,7 +1,9 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from build_site import page, EMAIL, EMAIL_SECONDARY, PHONE_1_DISPLAY, PHONE_1_TEL, PHONE_2_DISPLAY, PHONE_2_TEL, WHATSAPP_URL
+from build_site import (page, SERVICE_REGISTRY, WEBSITE_ONLY_MODE,
+                        EMAIL, EMAIL_SECONDARY, PHONE_1_DISPLAY, PHONE_1_TEL,
+                        PHONE_2_DISPLAY, PHONE_2_TEL, WHATSAPP_URL)
 
 SCHEMA = '''<script type="application/ld+json">
 {
@@ -13,6 +15,30 @@ SCHEMA = '''<script type="application/ld+json">
   ]
 }
 </script>'''
+
+# The selector offers only what is publicly on sale. The full set of
+# service labels stays in SERVICE_REGISTRY (scripts/build_site.py) and the
+# website breakdown stays in WEBSITE_ENQUIRY_OPTIONS below, so restoring a
+# service restores its option automatically.
+WEBSITE_ENQUIRY_OPTIONS = [
+    "Website Development",
+    "Landing Page",
+    "Corporate / Business Website",
+    "Portfolio Website",
+    "Website Maintenance",
+    "Website SEO",
+    "Website Performance Optimization",
+    "Other Website Enquiry",
+]
+
+if WEBSITE_ONLY_MODE:
+    _options = WEBSITE_ENQUIRY_OPTIONS
+else:
+    _options = [s["contact"] for s in SERVICE_REGISTRY if s["public"]] + ["Other / Not Sure"]
+
+service_options = "\n".join(
+    ['                <option value="" disabled selected>Select a service</option>'] +
+    ['                <option>%s</option>' % o for o in _options])
 
 body = f'''
   <div class="page-header">
@@ -45,16 +71,7 @@ body = f'''
             <div class="form-field">
               <label for="cf-service">Service Required</label>
               <select id="cf-service" name="service" required>
-                <option value="" disabled selected>Select a service</option>
-                <option>Website Development</option>
-                <option>Web Applications</option>
-                <option>Mobile Applications</option>
-                <option>Desktop Applications</option>
-                <option>Custom Software</option>
-                <option>SaaS Products</option>
-                <option>AI &amp; Automation</option>
-                <option>Software Maintenance</option>
-                <option>Other / Not Sure</option>
+{service_options}
               </select>
             </div>
           </div>
@@ -62,8 +79,9 @@ body = f'''
             <label for="cf-message">Message</label>
             <textarea id="cf-message" name="message" rows="5" placeholder="Tell us a bit about your project..." required></textarea>
           </div>
-          <button type="submit" class="btn btn-accent" style="width:100%;">Send Message <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
-          <p class="form-note">By submitting, you agree to be contacted about your enquiry. We don't share your details with third parties.</p>
+          <button type="submit" class="btn btn-accent" style="width:100%;">Compose Enquiry Email <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
+          <p class="form-note">This opens your own email app with the details filled in, addressed to <a href="mailto:{EMAIL}">{EMAIL}</a> &mdash; nothing is sent until you send it. Prefer to skip the form? Email, call or WhatsApp us directly using the details alongside.</p>
+          <p class="form-note">We use what you send only to answer your enquiry, and we don't share your details with third parties.</p>
         </form>
       </div>
 
@@ -71,32 +89,32 @@ body = f'''
         <div class="contact-info-card">
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></div>
-            <div><h4>Office</h4><p>Mogappair, Chennai - 37,<br>Tamil Nadu, India</p></div>
+            <div><h2 class="contact-info-title">Office</h2><p>Mogappair, Chennai - 37,<br>Tamil Nadu, India</p></div>
           </div>
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-envelope" aria-hidden="true"></i></div>
-            <div><h4>Email</h4><a href="mailto:{EMAIL}">{EMAIL}</a><br><a href="mailto:{EMAIL_SECONDARY}">{EMAIL_SECONDARY}</a></div>
+            <div><h2 class="contact-info-title">Email</h2><a href="mailto:{EMAIL}">{EMAIL}</a><br><span class="contact-email-role">Technical</span> <a href="mailto:{EMAIL_SECONDARY}">{EMAIL_SECONDARY}</a></div>
           </div>
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-phone" aria-hidden="true"></i></div>
-            <div><h4>Phone</h4><a href="tel:{PHONE_1_TEL}">{PHONE_1_DISPLAY}</a><br><a href="tel:{PHONE_2_TEL}">{PHONE_2_DISPLAY}</a></div>
+            <div><h2 class="contact-info-title">Phone</h2><a href="tel:{PHONE_1_TEL}">{PHONE_1_DISPLAY}</a><br><a href="tel:{PHONE_2_TEL}">{PHONE_2_DISPLAY}</a></div>
           </div>
           <div class="contact-info-row">
             <div class="ic"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></div>
-            <div><h4>WhatsApp</h4><a href="{WHATSAPP_URL}" target="_blank" rel="noopener noreferrer">Chat with us</a></div>
+            <div><h2 class="contact-info-title">WhatsApp</h2><a href="{WHATSAPP_URL}" target="_blank" rel="noopener noreferrer">Chat with us</a></div>
           </div>
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-clock" aria-hidden="true"></i></div>
-            <div><h4>Response Time</h4><p>Within 1 business day</p></div>
+            <div><h2 class="contact-info-title">Response Time</h2><p>Within 1 business day</p></div>
           </div>
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-headset" aria-hidden="true"></i></div>
-            <div><h4>Free Consultation</h4><p>30-minute scoping call, no obligation</p></div>
+            <div><h2 class="contact-info-title">Free Consultation</h2><p>30-minute scoping call, no obligation</p></div>
           </div>
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i></div>
             <div>
-              <h4>Follow Us</h4>
+              <h2 class="contact-info-title">Follow Us</h2>
               <div class="footer-social" style="margin-top:10px;">
                 <a href="https://www.instagram.com/deepabi_innovations/" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
                 <a href="https://www.facebook.com/profile.php?id=61593491164948" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
@@ -131,7 +149,6 @@ page(
     active="contact",
     title="Contact DeepAbi Innovations | Software Development Chennai",
     description="Talk to DeepAbi Innovations about your software project. Based in Mogappair, Chennai — call, WhatsApp or email for a free 30-minute consultation.",
-    extra_keywords="contact software developers Chennai, hire software company Mogappair, software project quote",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/contact.css">',
     extra_js='<script src="js/pages/contact.js"></script>',
