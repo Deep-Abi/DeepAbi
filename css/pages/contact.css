@@ -18,6 +18,13 @@
 .contact-info-row .ic{width:40px; height:40px; border-radius:10px; background:rgba(139,92,246,0.1); color:var(--violet); display:flex; align-items:center; justify-content:center; flex-shrink:0;}
 .contact-info-row .contact-info-title{font-size:14.5px; margin-bottom:2px;}
 .contact-info-row p,.contact-info-row a{font-size:14px; color:var(--text-secondary);}
+/* The rule above deliberately makes the email, phone and WhatsApp links read as
+   plain detail text rather than as links, which is right for them. A contextual
+   link in this column is different - it goes somewhere else on the site and has
+   to look like it does, so .inline-link keeps its own colour here. Its size
+   still comes from the rule above. */
+.contact-info-row a.inline-link{color:var(--violet-ink);}
+.contact-info-row a.inline-link:hover{color:var(--violet);}
 
 .map-section{
   border-radius:28px; overflow:hidden; box-shadow:0 24px 60px rgba(8,31,77,0.14);

@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from build_site import page, picture
+from build_site import page, picture, WEBSITE_ONLY_MODE
 
 SCHEMA = '''<script type="application/ld+json">
 {
@@ -71,19 +71,30 @@ filter_buttons_html = "\n        ".join(
     for key, label in FILTERS
 )
 
+# What the stack sentence says it powers. The broader wording is kept for the
+# day the other services are public again; while only Website Development is
+# switched on, the visible sentence must not offer web application development.
+if WEBSITE_ONLY_MODE:
+    stack_scope = "custom website development"
+else:
+    stack_scope = "custom website development and web application development"
+
 body = f'''
   <div class="page-header">
     <div class="container">
       <span class="eyebrow cyan">Technologies</span>
       <h1>Our technology stack</h1>
-      <p>We choose tools for stability, performance, and long-term maintainability &mdash; not trend-chasing. Here's exactly what powers a DeepAbi custom website development and web application development project.</p>
+      <p>We choose tools for stability, performance, and long-term maintainability &mdash; not trend-chasing. Here's exactly what powers a DeepAbi {stack_scope} project.</p>
     </div>
   </div>
 
   <div class="section" style="padding-bottom:0;">
     <div class="container">
       <div class="img-frame" data-reveal>
-        {picture("technology-stack-network", "Abstract network illustration representing DeepAbi's connected technology stack", 1160, 700, "assets/images/technology", eager=False)}
+        <!-- loading="eager": present in the first viewport at every width tested
+             (360-1440px, top 444-540px, 31-100% of its height visible) and the largest
+             contentful paint at several of them. Not fetchpriority="high". -->
+        {picture("technology-stack-network", "Abstract network illustration representing DeepAbi's connected technology stack", 1160, 700, "assets/images/technology", loading="eager")}
       </div>
     </div>
   </div>
@@ -107,7 +118,7 @@ body = f'''
     <div class="container">
       <div class="cta-section" data-reveal>
         <h2>Curious how we'd architect your project?</h2>
-        <p>We're happy to walk through stack choices before you commit to anything.</p>
+        <p>We're happy to walk through stack choices before you commit to anything. See what our <a class="inline-link" href="service-website-development.html">website development</a> covers.</p>
         <a href="contact.html" class="btn btn-accent">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
@@ -117,8 +128,8 @@ body = f'''
 page(
     filename="technologies.html",
     active="technologies",
-    title="Software Development Technologies | DeepAbi Innovations",
-    description="The engineering stack behind DeepAbi Innovations' software: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS and Cloudflare.",
+    title="Website Development Technologies | DeepAbi Innovations",
+    description="The engineering stack behind DeepAbi Innovations' websites: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS and Cloudflare.",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/technologies.css">',
     extra_js='<script src="js/pages/technologies.js"></script>',

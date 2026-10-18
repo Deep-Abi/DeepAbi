@@ -58,16 +58,36 @@ function initMobileMenu() {
   const closeBtn = document.getElementById('menuClose');
   if (!menu || !openBtn) return;
 
-  openBtn.addEventListener('click', () => {
-    menu.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  });
-  const close = () => {
-    menu.classList.remove('open');
-    document.body.style.overflow = '';
+  // The panel is hidden with visibility:hidden while closed (see common.css),
+  // which already keeps its controls out of the tab order and the
+  // accessibility tree. What follows is the state and focus handling that
+  // belongs with it: the button has always been marked aria-expanded="false"
+  // in the markup and nothing ever changed it, so assistive technology was
+  // told the menu was shut even while it was open.
+  const setOpen = (open) => {
+    menu.classList.toggle('open', open);
+    openBtn.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+
+    if (open) {
+      // Move focus into the panel so the next Tab continues inside it rather
+      // than behind the overlay. The close button is the natural first stop.
+      (closeBtn || menu.querySelector('a, button'))?.focus();
+    } else if (menu.contains(document.activeElement)) {
+      // Only pull focus back when it is still inside the panel we just hid -
+      // following a menu link navigates away and must not be interrupted.
+      openBtn.focus();
+    }
   };
-  if (closeBtn) closeBtn.addEventListener('click', close);
-  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', close));
+
+  openBtn.addEventListener('click', () => setOpen(true));
+  if (closeBtn) closeBtn.addEventListener('click', () => setOpen(false));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+
+  // Escape closes the panel, matching the floating contact menu's behaviour.
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && menu.classList.contains('open')) setOpen(false);
+  });
 }
 
 /* ---------- Scroll reveal ---------- */
@@ -139,22 +159,27 @@ function initContactFab() {
   const menu = document.getElementById('fabMenu');
   if (!fab || !toggle || !menu) return;
 
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // The menu opens ONLY when the visitor activates the button.
+  //
+  // It used to expand by itself 20 seconds after load and collapse 2 seconds
+  // later. That has been removed entirely: nothing here runs on a timer, so the
+  // menu never appears unprompted, never covers content the visitor is reading,
+  // and never reopens after they have closed it. Position, appearance and the
+  // open/close animation are unchanged - only the automatic trigger is gone.
 
   function setOpen(open) {
+    const wasOpen = fab.classList.contains('open');
     fab.classList.toggle('open', open);
     toggle.setAttribute('aria-expanded', String(open));
     menu.setAttribute('aria-hidden', String(!open));
-  }
 
-  // Auto-expand exactly once, 20 seconds after the page loads, and remain
-  // open for ~2 seconds before collapsing. This runs on its own schedule —
-  // manual opens/closes by the user don't cancel or reset it.
-  if (!reduceMotion) {
-    setTimeout(() => {
-      setOpen(true);
-      setTimeout(() => setOpen(false), 2000);
-    }, 20000);
+    // Closing gives the menu visibility:hidden, which drops its links out of
+    // the tab order. If one of them held focus at that moment, focus would fall
+    // back to <body> and keyboard users would lose their place in the page.
+    // Hand it back to the button that controls the menu.
+    if (wasOpen && !open && menu.contains(document.activeElement)) {
+      toggle.focus();
+    }
   }
 
   toggle.addEventListener('click', () => {

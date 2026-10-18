@@ -20,7 +20,7 @@ single destination for Website Development.
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from build_site import page, picture
+from build_site import page, picture, WEBSITE_ONLY_MODE
 
 SCHEMA = '''<script type="application/ld+json">
 {
@@ -31,10 +31,16 @@ SCHEMA = '''<script type="application/ld+json">
   "description": "Professional website development for businesses, companies and brands — corporate, business, landing page and portfolio websites, built responsive, SEO-ready and fast.",
   "provider": {"@type": "Organization", "name": "DeepAbi Innovations", "url": "https://www.deepabi.com"},
   "areaServed": [
-    {"@type": "Place", "name": "Mogappair, Chennai"},
-    {"@type": "Place", "name": "Ambattur, Chennai"},
-    {"@type": "Place", "name": "Anna Nagar, Chennai"},
-    {"@type": "City", "name": "Chennai"}
+    { "@type": "Place", "name": "Mogappair, Chennai" },
+    { "@type": "Place", "name": "Mogappair East, Chennai" },
+    { "@type": "Place", "name": "Mogappair West, Chennai" },
+    { "@type": "Place", "name": "Nolambur, Chennai" },
+    { "@type": "Place", "name": "Ambattur, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar East, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar West, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar West Extension, Chennai" },
+    { "@type": "City", "name": "Chennai" }
   ]
 }
 </script>
@@ -77,6 +83,31 @@ def service_block(anchor, eyebrow, title, desc, items, image_name, image_alt, ic
       </div>'''
 
 
+# ---------------------------------------------------------------------------
+# Website Development block: the offer follows the service configuration.
+#
+# The intro and the first feature bullet used to offer "custom web
+# applications" - a service that is not public while only Website Development
+# is. Both are now conditional. Nothing is deleted: the full-offer wording is
+# kept verbatim below and returns automatically as soon as Web Applications is
+# public again, because the flag is derived from SERVICE_REGISTRY rather than
+# hand-set. The bullet list keeps six items either way, so the block's layout
+# is unchanged.
+WD_INTRO_ALL = ("We design and build fast, responsive websites and custom web applications "
+                "tailored to your business \u2014 architected for growth from day one.")
+WD_FEATURES_ALL = ["Custom Web Applications", "Component-Driven Front Ends",
+                   "API &amp; CMS Integration", "Responsive, Cross-Device Development",
+                   "Accessibility Built In", "Clean, Documented Codebase"]
+
+WD_INTRO_WEBSITE_ONLY = ("We design and build fast, responsive websites tailored to your "
+                         "business \u2014 architected for growth from day one.")
+WD_FEATURES_WEBSITE_ONLY = ["Component-Driven Front Ends", "API &amp; CMS Integration",
+                            "Responsive, Cross-Device Development", "Accessibility Built In",
+                            "Clean, Documented Codebase", "Built to Grow Without a Rebuild"]
+
+WD_INTRO = WD_INTRO_WEBSITE_ONLY if WEBSITE_ONLY_MODE else WD_INTRO_ALL
+WD_FEATURES = WD_FEATURES_WEBSITE_ONLY if WEBSITE_ONLY_MODE else WD_FEATURES_ALL
+
 body = f'''
   <!-- Redesigned service-page hero. Uses an existing project image for now. -->
   <div class="page-header page-header-gradient services-hero">
@@ -95,7 +126,7 @@ body = f'''
         </nav>
         <span class="eyebrow gold">Website Development</span>
         <h1>Professional Websites Built for Business Growth</h1>
-        <p>DeepAbi builds responsive, scalable and professionally structured websites for businesses, brands and organizations &mdash; fast to load, easy to update, and architected so they can grow without a rebuild.</p>
+        <p>DeepAbi builds responsive, scalable and professionally structured websites for businesses, brands and organizations &mdash; fast to load, easy to update, and architected so they can grow without a rebuild. We build websites for businesses in Mogappair East and West, Nolambur, and Anna Nagar East, West and West Extension.</p>
         <div class="services-hero-actions">
           <a href="contact.html" class="btn btn-accent btn-lg">Start a Website Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
           <a href="#website-development" class="btn btn-secondary btn-lg services-hero-btn-outline">Explore Website Services</a>
@@ -103,7 +134,10 @@ body = f'''
       </div>
       <div class="services-hero-visual">
         <div class="hero-visual-glow" aria-hidden="true"></div>
-        {picture("corporate_website_design", "Illustration of a professionally structured corporate website layout", 480, 400, "assets/images/projects")}
+        <!-- loading="eager": fully inside the first viewport at every width tested
+             (360-1440px, top 196-247px) and the largest contentful paint from 768px up.
+             Not fetchpriority="high". -->
+        {picture("corporate_website_design", "Illustration of a professionally structured corporate website layout", 480, 400, "assets/images/projects", loading="eager")}
       </div>
     </div>
   </div>
@@ -124,8 +158,7 @@ body = f'''
 
       {service_block(
         "website-development", "01 · Build", "Website Development",
-        "We design and build fast, responsive websites and custom web applications tailored to your business — architected for growth from day one.",
-        ["Custom Web Applications", "Component-Driven Front Ends", "API &amp; CMS Integration", "Responsive, Cross-Device Development", "Accessibility Built In", "Clean, Documented Codebase"],
+        WD_INTRO, WD_FEATURES,
         "website-development-workspace", "Illustration representing a website development project interface", "fa-solid fa-code"
       )}
 

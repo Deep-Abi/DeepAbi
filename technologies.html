@@ -4,25 +4,25 @@
 <script>document.documentElement.className=document.documentElement.className.replace('no-js','js');</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Software Development Technologies | DeepAbi Innovations</title>
-<meta name="description" content="The engineering stack behind DeepAbi Innovations' software: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS and Cloudflare." />
-<meta name="keywords" content="software development company in Chennai, software company in Chennai, custom software development Chennai, application development company Chennai, website development company in Chennai, web application development Chennai, mobile app development Chennai, desktop application development Chennai, SaaS development Chennai, AI automation solutions Chennai, business automation Chennai, software maintenance Chennai, software development company in Mogappair, website development company in Mogappair, software company Ambattur, software company Anna Nagar, DeepAbi Innovations, DeepAbi" />
+<title>Website Development Technologies | DeepAbi Innovations</title>
+<meta name="description" content="The engineering stack behind DeepAbi Innovations' websites: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS and Cloudflare." />
+<meta name="keywords" content="website development company in Chennai, website development company in Mogappair, DeepAbi Innovations, DeepAbi" />
 <meta name="author" content="DeepAbi" />
 <link rel="canonical" href="https://www.deepabi.com/technologies.html" />
 <meta name="robots" content="index, follow" />
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Software Development Technologies | DeepAbi Innovations" />
-<meta property="og:description" content="The engineering stack behind DeepAbi Innovations' software: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS and Cloudflare." />
+<meta property="og:title" content="Website Development Technologies | DeepAbi Innovations" />
+<meta property="og:description" content="The engineering stack behind DeepAbi Innovations' websites: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS and Cloudflare." />
 <meta property="og:url" content="https://www.deepabi.com/technologies.html" />
 <meta property="og:image" content="https://www.deepabi.com/assets/images/backgrounds/og-social-banner.jpg" />
 <meta property="og:site_name" content="DeepAbi" />
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Software Development Technologies | DeepAbi Innovations" />
-<meta name="twitter:description" content="The engineering stack behind DeepAbi Innovations' software: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS and Cloudflare." />
+<meta name="twitter:title" content="Website Development Technologies | DeepAbi Innovations" />
+<meta name="twitter:description" content="The engineering stack behind DeepAbi Innovations' websites: React, Next.js, Tailwind CSS, Python, FastAPI, PostgreSQL, AWS and Cloudflare." />
 <meta name="twitter:image" content="https://www.deepabi.com/assets/images/backgrounds/og-social-banner.jpg" />
 
 <!-- Favicons -->
@@ -212,18 +212,21 @@
     <div class="container">
       <span class="eyebrow cyan">Technologies</span>
       <h1>Our technology stack</h1>
-      <p>We choose tools for stability, performance, and long-term maintainability &mdash; not trend-chasing. Here's exactly what powers a DeepAbi custom website development and web application development project.</p>
+      <p>We choose tools for stability, performance, and long-term maintainability &mdash; not trend-chasing. Here's exactly what powers a DeepAbi custom website development project.</p>
     </div>
   </div>
 
   <div class="section" style="padding-bottom:0;">
     <div class="container">
       <div class="img-frame" data-reveal>
+        <!-- loading="eager": present in the first viewport at every width tested
+             (360-1440px, top 444-540px, 31-100% of its height visible) and the largest
+             contentful paint at several of them. Not fetchpriority="high". -->
         <picture>
         <source srcset="assets/images/technology/avif/technology-stack-network.avif" type="image/avif">
         <source srcset="assets/images/technology/webp/technology-stack-network.webp" type="image/webp">
         <source srcset="assets/images/technology/png/technology-stack-network.png" type="image/png">
-        <img src="assets/images/technology/jpg/technology-stack-network.jpg" alt="Abstract network illustration representing DeepAbi's connected technology stack" width="1160" height="700" loading="lazy" decoding="async">
+        <img src="assets/images/technology/jpg/technology-stack-network.jpg" alt="Abstract network illustration representing DeepAbi's connected technology stack" width="1160" height="700" loading="eager" decoding="async">
       </picture>
       </div>
     </div>
@@ -460,7 +463,7 @@
     <div class="container">
       <div class="cta-section" data-reveal>
         <h2>Curious how we'd architect your project?</h2>
-        <p>We're happy to walk through stack choices before you commit to anything.</p>
+        <p>We're happy to walk through stack choices before you commit to anything. See what our <a class="inline-link" href="service-website-development.html">website development</a> covers.</p>
         <a href="contact.html" class="btn btn-accent">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
@@ -485,7 +488,7 @@
             <img src="assets/images/logos_icons/web/logo-plate.png" alt="DeepAbi Innovations" width="288" height="132">
           </picture>
         </div>
-        <p>Driving Economic Empowerment Through Technology. Based in Mogappair, DeepAbi Innovations builds websites, applications and custom software for businesses across Ambattur, Anna Nagar and Chennai.</p>
+        <p>Driving Economic Empowerment Through Technology. Based in Mogappair, DeepAbi Innovations builds professional websites for businesses across Ambattur, Anna Nagar and Chennai.</p>
         <div class="footer-social">
           <a href="https://www.instagram.com/deepabi_innovations/" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
           <a href="https://www.facebook.com/profile.php?id=61593491164948" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
@@ -528,7 +531,15 @@
   </div>
 </footer>
 
-<div class="toast" id="toast"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span id="toastMsg">Message sent successfully!</span></div>
+<!-- The toast has exactly one consumer: the contact form, which does not
+     send anything - it hands the enquiry to the visitor's own mail client.
+     So the shipped default must not claim a delivery. It previously read
+     "Message sent successfully!" with a green tick, which would have been
+     a false statement in any state that showed the toast before
+     js/pages/contact.js had rewritten it. The default is now the honest
+     hand-off wording and the icon is an envelope, not a success tick.
+     role="status" lets assistive technology announce it when it appears. -->
+<div class="toast" id="toast" role="status" aria-live="polite"><i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i><span id="toastMsg">Your email app should open with this enquiry ready to send.</span></div>
 
 <div class="contact-fab" id="contactFab">
   <div class="fab-menu" id="fabMenu" role="menu" aria-hidden="true">

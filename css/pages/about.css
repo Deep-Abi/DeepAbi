@@ -1,4 +1,15 @@
 .about-intro{display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.05fr); gap:56px; align-items:center;}
+/* Single-column variant, used while the "Who We Are" illustration is hidden
+   (SHOW_WHO_WE_ARE_IMAGE in scripts/pages/build_about.py). Left to the base
+   rule the surviving text cell would span the whole 1200px container and the
+   lines would run far too long to read; this narrows and centres it instead,
+   so the section reads as deliberate rather than as a layout with a hole in
+   it. Removing the modifier restores the two-column layout untouched. */
+.about-intro.about-intro-text-only{
+  grid-template-columns:minmax(0, 1fr);
+  max-width:760px;
+  gap:0;
+}
 
 /* ---------- Mission / Vision cards (identical layout) ---------- */
 .mv-grid{display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:28px;}

@@ -40,12 +40,31 @@ service_options = "\n".join(
     ['                <option value="" disabled selected>Select a service</option>'] +
     ['                <option>%s</option>' % o for o in _options])
 
+# Two contact cards state commitments that have not been confirmed: a
+# one-business-day response time and a free 30-minute scoping call. They are
+# held here rather than deleted, so restoring them is a one-line change once
+# the commitments are confirmed. While the flag is False the markup is simply
+# not emitted - the info column is a stack of rows, so the remaining rows close
+# up and no empty space is left behind.
+SHOW_UNCONFIRMED_COMMITMENT_CARDS = False
+
+UNCONFIRMED_COMMITMENT_CARDS = """          <div class="contact-info-row">
+            <div class="ic"><i class="fa-solid fa-clock" aria-hidden="true"></i></div>
+            <div><h2 class="contact-info-title">Response Time</h2><p>Within 1 business day</p></div>
+          </div>
+          <div class="contact-info-row">
+            <div class="ic"><i class="fa-solid fa-headset" aria-hidden="true"></i></div>
+            <div><h2 class="contact-info-title">Free Consultation</h2><p>30-minute scoping call, no obligation</p></div>
+          </div>"""
+
+unconfirmed_cards = UNCONFIRMED_COMMITMENT_CARDS if SHOW_UNCONFIRMED_COMMITMENT_CARDS else ""
+
 body = f'''
   <div class="page-header">
     <div class="container">
       <span class="eyebrow cyan">Contact</span>
       <h1>Let's Build Your Digital Future</h1>
-      <p>Tell us about your project and we'll get back to you within one business day.</p>
+      <p>Tell us about your website project and the support you need.</p>
     </div>
   </div>
 
@@ -89,7 +108,7 @@ body = f'''
         <div class="contact-info-card">
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></div>
-            <div><h2 class="contact-info-title">Office</h2><p>Mogappair, Chennai - 37,<br>Tamil Nadu, India</p></div>
+            <div><h2 class="contact-info-title">Office</h2><p>Mogappair, Chennai - 37,<br>Tamil Nadu, India</p><p>Service areas: Mogappair East and West, Nolambur, Anna Nagar East, Anna Nagar West and Anna Nagar West Extension.</p><p><a class="inline-link" href="service-website-development.html">What our website development covers</a></p></div>
           </div>
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-envelope" aria-hidden="true"></i></div>
@@ -103,14 +122,7 @@ body = f'''
             <div class="ic"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></div>
             <div><h2 class="contact-info-title">WhatsApp</h2><a href="{WHATSAPP_URL}" target="_blank" rel="noopener noreferrer">Chat with us</a></div>
           </div>
-          <div class="contact-info-row">
-            <div class="ic"><i class="fa-solid fa-clock" aria-hidden="true"></i></div>
-            <div><h2 class="contact-info-title">Response Time</h2><p>Within 1 business day</p></div>
-          </div>
-          <div class="contact-info-row">
-            <div class="ic"><i class="fa-solid fa-headset" aria-hidden="true"></i></div>
-            <div><h2 class="contact-info-title">Free Consultation</h2><p>30-minute scoping call, no obligation</p></div>
-          </div>
+{unconfirmed_cards}
           <div class="contact-info-row">
             <div class="ic"><i class="fa-solid fa-share-nodes" aria-hidden="true"></i></div>
             <div>
@@ -147,8 +159,8 @@ body = f'''
 page(
     filename="contact.html",
     active="contact",
-    title="Contact DeepAbi Innovations | Software Development Chennai",
-    description="Talk to DeepAbi Innovations about your software project. Based in Mogappair, Chennai — call, WhatsApp or email for a free 30-minute consultation.",
+    title="Contact DeepAbi Innovations | Website Development Chennai",
+    description="Talk to DeepAbi Innovations about your website project. Based in Mogappair, Chennai — call, WhatsApp or email for a free 30-minute consultation.",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/contact.css">',
     extra_js='<script src="js/pages/contact.js"></script>',

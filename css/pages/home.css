@@ -4,7 +4,15 @@
 
 .hero{
   position:relative;
-  padding:148px 0 76px;
+  /* Bottom padding has to reserve room for .scroll-indicator, which is
+     absolutely positioned at bottom:28px and stands about 60px tall, so it
+     needs ~88px of clear space. The old 76px was short of that, and it only
+     looked fine because the stat strip used to sit between the mission/vision
+     cards and the hero's bottom edge and absorbed the difference. With that
+     strip gone the cards were the last element in flow and the indicator
+     printed on top of them. 112px clears the indicator with ~24px to spare at
+     every width. */
+  padding:148px 0 112px;
   overflow:hidden;
   background:var(--navy);
   color:#fff;
@@ -31,11 +39,48 @@
   animation:gradmove 6s ease infinite;
 }
 @keyframes gradmove{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-.typing-cursor{
-  display:inline-block; color:var(--gold); font-weight:400; margin-left:2px;
+/* The typing caret is drawn, not typed. The span is empty and the bar is a
+   background block, so no "|" character exists in the heading's text or in its
+   accessible name. It appears only while the animation is actually running:
+   js/pages/home.js adds .is-typing to the heading, which it does not do when
+   JavaScript is off or the visitor prefers reduced motion. */
+/* ---------- Hero heading: reserved space ----------
+   The heading is authored with its full text and JavaScript then replaces it with
+   one character, so the box used to collapse the moment the animation started
+   (measured: 128px -> 43px at 375px, 203px -> 70px at 1440px) and then grew and
+   shrank again on every type/delete cycle, moving the sub-heading, the buttons and
+   everything below them.
+
+   The two spans are stacked in the same grid cell. The reserver carries the
+   complete heading and is the only one that contributes height, so the <h1> is
+   always exactly as tall as the finished heading; the live layer types inside that
+   box without ever changing it. Both are ordinary text in the same column at the
+   same size, so they wrap identically at every width, after the webfont swaps in
+   and at any zoom level. No height is fixed and nothing is clipped. The completed
+   heading - wording, gradient, type, line-wrap - renders exactly as before. */
+.typing-heading{display:grid;}
+.typing-heading > .typing-reserve,
+.typing-heading > .typing-live{grid-area:1 / 1; min-width:0;}
+.typing-reserve{visibility:hidden;}
+/* The caret occupies 3px plus a 4px margin on the live layer. Mirroring it as an
+   inert spacer keeps the reserver's wrapping identical in the worst case, so the
+   caret can never push the live text onto a line the reserver did not account for.
+   It is added under the same condition as the caret itself, so it is absent when
+   JavaScript is off or reduced motion is preferred. */
+.typing-heading.is-typing .typing-reserve::after{
+  content:''; display:inline-block; width:3px; height:1em; margin-left:4px; vertical-align:-0.1em;
+}
+
+.typing-cursor{display:none;}
+.typing-heading.is-typing .typing-cursor{
+  display:inline-block; width:3px; height:1em; margin-left:4px;
+  background:var(--gold); border-radius:1px; vertical-align:-0.1em;
   animation:cursorBlink 0.9s step-end infinite;
 }
 @keyframes cursorBlink{0%,100%{opacity:1;}50%{opacity:0;}}
+@media (prefers-reduced-motion: reduce){
+  .typing-heading.is-typing .typing-cursor{animation:none; display:none;}
+}
 .hero-sub{font-size:18px; color:rgba(255,255,255,0.78); max-width:540px; margin-bottom:28px;}
 
 .hero-actions{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:8px;}
@@ -51,9 +96,23 @@
   border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-lg); position:relative; z-index:1;
   width:fit-content; margin:0 auto; display:block;
 }
+/* The box is reserved before the image arrives. Previously this was
+   width:auto; height:auto; max-height:clamp(...), which leaves the element
+   with no definite size until the image decodes - and because the parent is
+   width:fit-content, the whole hero column collapsed and then jumped when the
+   file landed. That produced an intermittent load-time layout shift (observed
+   in up to 2 of 5 runs, worst value 0.4547 at 390x844).
+   Giving the image a definite height plus an explicit 2:3 aspect ratio means
+   the width is known from the first layout pass. The rendered result is
+   unchanged: the clamp values are the same, and because they never exceed the
+   source's 1200px natural height, height: and max-height: resolve identically.
+   Correcting the width/height attributes alone does NOT fix this - with
+   width:auto the browser ignores the attribute ratio - which is why the fix
+   lives here rather than in the markup. */
 .hero-illustration-img img{
-  width:auto; height:auto; max-width:100%;
-  max-height:clamp(320px, 62vh, 640px);
+  width:auto; max-width:100%;
+  height:clamp(320px, 62vh, 640px);
+  aspect-ratio:2 / 3;
   margin:0 auto;
 }
 .hero-visual-glow{
@@ -88,7 +147,7 @@
      tucking under the bar — anything tighter has to come out of the navbar
      itself, not the hero. Bottom padding and the stat-strip offset tighten
      to match so the band stays visually balanced top-to-bottom. */
-  .hero{padding:128px 0 76px;}
+  .hero{padding:128px 0 112px;}
   .hero-stats{margin-top:28px; padding-top:20px;}
   .hero > .container{max-width:1440px;}
   /* Small inset on the copy only — nudges the headline block rightward off
@@ -114,9 +173,26 @@
      the row height, and the copy is centred against it, so shortening the
      image shortens the whole first band and pulls the copy's own dead space
      in with it. Cap eased back so the row loses ~180px of height while the
-     image stays clearly larger than its original 427x640. */
+     image stays clearly larger than its original 427x640.
+
+     Eased back again. The copy column is about 630px tall; at 98vh the image
+     column rendered 882px on a 1440x900 screen, and because .hero-grid centres
+     the two columns against each other, the 250px difference became dead space
+     split above and below the copy - the visible "gap" under the buttons. The
+     cap now tracks the copy column more closely, which removes most of that
+     slack. Nothing else changes: the frame still shrink-wraps the image, so the
+     aspect ratio stays exact with no crop, no distortion and no upscaling past
+     the 800x1200 source, and the typography, alignment and animations are
+     untouched. Still well above the original 427x640 render.
+
+     (The source is 800x1200. The markup used to declare 1024x1536, which this
+     comment previously repeated; both are now corrected. The cap stays well
+     under 1200px, so there is still no upscaling.)
+
+     height: rather than max-height: for the same reason as the base rule - it
+     reserves the box before the image loads. Same clamp, same rendered size. */
   .hero-illustration-img img{
-    max-height:clamp(680px, 98vh, 1140px);
+    height:clamp(560px, 76vh, 900px);
   }
   .hero-visual-glow{inset:-64px;}
 }
@@ -369,13 +445,43 @@
    Responsive — consolidated, largest breakpoint to smallest
    ========================================================================== */
 @media (max-width:1024px){
-  .hero-grid{grid-template-columns:minmax(0, 1fr);}
-  .hero-visual{order:-1;}
+  /* 60px reads as a column gap beside the copy on desktop; stacked, it becomes
+     a row gap that sits on top of the ~13% of empty canvas at the top of the
+     illustration file, so the band between the buttons and the globe measured
+     about 160px. 32px closes most of that without crowding the two. */
+  .hero-grid{grid-template-columns:minmax(0, 1fr); gap:32px;}
+  /* The illustration file is a 800x1200 canvas with the globe occupying rows
+     278-858; the 278px above it and 341px below it are FULLY TRANSPARENT
+     (measured alpha 0), so 52% of the element's height renders nothing and
+     still pushes the rest of the hero down. These negative margins pull that
+     empty canvas back in. The globe itself is untouched - no crop, no
+     object-fit, no change of aspect ratio, no scaling - only the blank area
+     around it stops taking up layout space. Percentages resolve against the
+     frame's width, and the frame shrink-wraps the image at a fixed 2:3 ratio,
+     so one pair of values holds at every width in this range. Deliberately
+     short of the full transparent band, which leaves clear space around the
+     globe. Desktop (>=1025px) is untouched. */
+  .hero-illustration-img img{margin-top:-18%; margin-bottom:-22%;}
+  /* The illustration used to be pulled above the copy here (order:-1). On a
+     single column that pushed the headline and the "Start Your Project" button
+     below the fold at every width in this range - 805px down on a 375x812
+     screen - so the first thing a visitor saw was artwork with no idea what the
+     page was selling. The image now follows the copy in source order, which is
+     also its natural DOM order, so the headline and the primary call to action
+     come first and the globe sits directly beneath them. Desktop (>=1025px) is
+     a two-column grid and is unaffected by this rule. */
   .featured-project{grid-template-columns:minmax(0, 1fr);}
   .wwb-grid{grid-template-columns:repeat(2, minmax(0, 1fr));}
 }
 @media (max-width:768px){
-  .hero{padding:160px 0 70px;}
+  /* Bottom padding matched to the base rule for the same reason: the scroll
+     indicator needs ~90px of clear space and 70px left it printing over the
+     mission/vision cards once the stat strip was removed. */
+  /* Top padding was 160px against a fixed header that is only 57px tall at
+     375px and 45px at 768px, leaving ~100px of empty band above the eyebrow.
+     96px clears the tallest header in this range with ~39px of breathing room
+     and returns that space to the content. */
+  .hero{padding:96px 0 112px;}
   .hero-mv-grid{grid-template-columns:minmax(0, 1fr);}
   .featured-project{gap:32px;}
 }

@@ -210,13 +210,50 @@ else:
                 "automation and software maintenance \u2014 built around how your business "
                 "actually works.")
 
+# ---------------------------------------------------------------------------
+# Services hero illustration: visibility follows the service configuration.
+#
+# The artwork names all eight service lines as text baked into the image -
+# Website Development plus Web Applications, Mobile Applications, Desktop
+# Applications, Custom Software, SaaS Products, AI & Automation and Software
+# Maintenance. While only Website Development is public, that advertises seven
+# services the rest of the page deliberately does not offer, and the wording
+# cannot be corrected without regenerating the artwork.
+#
+# So the whole visual is hidden in website-only mode and the hero becomes a
+# single column, which leaves no empty image slot behind. Nothing is deleted:
+# the asset, all four of its formats and the picture() call below are preserved
+# exactly, and the illustration returns on its own as soon as more than one
+# service is public. The flag is derived, not hand-set, so it cannot drift out
+# of step with SERVICE_REGISTRY.
+SHOW_SERVICES_HERO_ILLUSTRATION = not WEBSITE_ONLY_MODE
+
+SERVICES_HERO_ILLUSTRATION = picture(
+    "services-hero-illustration",
+    "Illustration of connected service modules orbiting a central hub, representing DeepAbi's full-lifecycle service offering",
+    480, 400, "assets/images/services", loading="eager")
+
+if SHOW_SERVICES_HERO_ILLUSTRATION:
+    # loading="eager" on the picture above: when shown, this illustration is fully
+    # inside the first viewport at every width tested and is the page's largest
+    # contentful paint. Deliberately not fetchpriority="high".
+    services_hero_visual = (
+        '      <div class="services-hero-visual">\n'
+        '        <div class="hero-visual-glow" aria-hidden="true"></div>\n'
+        '        ' + SERVICES_HERO_ILLUSTRATION + '\n'
+        '      </div>\n')
+    services_hero_grid_class = "container services-hero-grid"
+else:
+    services_hero_visual = ""
+    services_hero_grid_class = "container services-hero-grid services-hero-text-only"
+
 body = f'''
   <div class="page-header page-header-gradient services-hero">
     <div class="hero-bg" aria-hidden="true">
       <div class="mesh-blob blob-1"></div>
       <div class="mesh-blob blob-2"></div>
     </div>
-    <div class="container services-hero-grid">
+    <div class="{services_hero_grid_class}">
       <div>
         <span class="eyebrow gold">Our Services</span>
         <h1>{hero_h1}</h1>
@@ -226,11 +263,7 @@ body = f'''
           <a href="#website-development" class="btn btn-secondary btn-lg services-hero-btn-outline">{hero_cta}</a>
         </div>
       </div>
-      <div class="services-hero-visual">
-        <div class="hero-visual-glow" aria-hidden="true"></div>
-        {picture("services-hero-illustration", "Illustration of connected service modules orbiting a central hub, representing DeepAbi's full-lifecycle service offering", 480, 400, "assets/images/services")}
-      </div>
-    </div>
+{services_hero_visual}    </div>
   </div>
 
   <div class="section" style="padding-bottom:0;">

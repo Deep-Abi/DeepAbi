@@ -40,7 +40,7 @@ downloaded. Only names that have a .jpg fallback on disk are used, so the
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from build_site import page, picture, PUBLIC_SERVICE_SLUGS
+from build_site import page, picture, PUBLIC_SERVICE_SLUGS, WEBSITE_ONLY_MODE
 
 SCHEMA = '''<script type="application/ld+json">
 {
@@ -578,6 +578,7 @@ body = f'''
       <div class="section-head center" data-reveal>
         <h2>What We Build</h2>
         <p style="margin:0 auto;">{library_lede}</p>
+        <p style="margin:8px auto 0;"><a class="inline-link" href="service-website-development.html">What our website development includes</a></p>
       </div>
 {browse_controls}
       <div class="grid-3 pf-grid" id="projectsGrid" data-reveal>
@@ -607,5 +608,12 @@ page(
     extra_css='<link rel="stylesheet" href="css/pages/projects.css">',
     extra_js='<script src="js/pages/projects.js"></script>',
     schema=SCHEMA,
-    extra_keywords="software development demo projects, web application demo, mobile app demo, business software examples Chennai",
+    # Page-level keywords follow the same flags as everything else. Every term
+    # in the full list named a service that is not public - software
+    # development, web application and mobile app demos - and the demos on this
+    # page are all website work while website-only mode is on, so in that mode
+    # the page adds nothing to the shared pool. Nothing was reworded or added.
+    extra_keywords=("" if WEBSITE_ONLY_MODE else
+                    "software development demo projects, web application demo, "
+                    "mobile app demo, business software examples Chennai"),
 )

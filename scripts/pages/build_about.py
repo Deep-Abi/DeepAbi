@@ -26,25 +26,92 @@ else:
                     "software, and AI-powered solutions for businesses that need a technology "
                     "partner they can actually reach \u2014 not a ticketing queue.")
 
+# The "Who We Are" illustration is temporarily hidden.
+#
+# The artwork itself has statistics rendered into the image - "50+ Experts",
+# "100+ Projects Delivered", "30+ Happy Clients", "5+ Years of Excellence" -
+# none of which has been verified. Because they are pixels rather than text, no
+# content audit catches them, so the image is withheld until it can be replaced
+# with artwork that makes no unverified claim.
+#
+# Nothing is destroyed: the asset stays on disk at assets/images/about/<fmt>/
+# team-collaboration.<fmt>, and its full picture() configuration - name, alt
+# text, dimensions, folder - is preserved below. Set the flag to True to bring
+# it back exactly as it was. No replacement artwork has been generated and no
+# substitute numbers have been invented.
+# ---------------------------------------------------------------------------
+# Unconfirmed claims, held back until the facts are confirmed.
+#
+# Each original line is preserved verbatim below so it can be restored by
+# flipping one flag - nothing has to be rewritten from memory. None of the
+# replacements invent anything: they restate wording already approved elsewhere
+# on the site, or simply drop the unconfirmed clause.
+
+# "small and senior" describes staffing that has not been confirmed. Held back
+# in both places it appeared.
+SHOW_TEAM_COMPOSITION_CLAIM = False
+TEAM_CLAIM_PARAGRAPH = ('        <p>We keep our team small and senior on purpose. Every project is led by '
+                        'people who write the code and make the design decisions, which means fewer '
+                        'handoffs, faster iteration, and a lot less lost in translation.</p>')
+PARTNER_LEDE_WITH_CLAIM = ("We keep teams small and senior, communicate directly, and stay invested "
+                           "in your project long after launch.")
+# Same sentence with the staffing clause removed. What remains is exactly what
+# the three cards underneath it already say.
+PARTNER_LEDE_NEUTRAL = ("We communicate directly and stay invested in your project long after launch.")
+
+team_claim_paragraph = TEAM_CLAIM_PARAGRAPH if SHOW_TEAM_COMPOSITION_CLAIM else ""
+partner_lede = PARTNER_LEDE_WITH_CLAIM if SHOW_TEAM_COMPOSITION_CLAIM else PARTNER_LEDE_NEUTRAL
+
+# The Current Stage entry claimed delivery of web applications - not a public
+# service while only Website Development is - and asserted an existing client
+# base ("for early clients"), which has not been confirmed. The replacement
+# names only the services this site actually offers, in the Services page's own
+# approved wording, and makes no claim about clients.
+SHOW_UNCONFIRMED_CURRENT_STAGE_CLAIM = False
+CURRENT_STAGE_WITH_CLAIM = ("Building our foundation — delivering websites, web applications, "
+                            "maintenance, and SEO for early clients with hands-on attention to "
+                            "every project.")
+CURRENT_STAGE_NEUTRAL = ("Building our foundation — focused on website development, with the "
+                         "maintenance, SEO and performance work that keeps sites earning their "
+                         "place after launch.")
+current_stage_text = (CURRENT_STAGE_WITH_CLAIM if SHOW_UNCONFIRMED_CURRENT_STAGE_CLAIM
+                      else CURRENT_STAGE_NEUTRAL)
+
+SHOW_WHO_WE_ARE_IMAGE = False
+
+WHO_WE_ARE_IMAGE = picture(
+    "team-collaboration",
+    "Abstract illustration representing a collaborative technology team workspace",
+    640, 434, "assets/images/about")
+
+if SHOW_WHO_WE_ARE_IMAGE:
+    who_we_are_visual = '      <div class="img-frame">\n        ' + WHO_WE_ARE_IMAGE + '\n      </div>\n'
+    about_intro_class = "container about-intro"
+else:
+    # With the image column gone the section would be a single grid cell
+    # spanning the full container, which makes the paragraphs too wide to read.
+    # The modifier narrows and centres the remaining text column instead of
+    # leaving an empty half.
+    who_we_are_visual = ""
+    about_intro_class = "container about-intro about-intro-text-only"
+
 body = f'''
   <div class="page-header">
     <div class="container">
       <span class="eyebrow cyan">About DeepAbi</span>
       <h1>Who we are</h1>
       <p>A focused technology studio engineering digital excellence, with a long-term, partnership-driven mindset.</p>
+      <p>Our <a class="inline-link" href="service-website-development.html">website development services</a> support businesses in Mogappair, Nolambur and Anna Nagar.</p>
     </div>
   </div>
 
   <div class="section">
-    <div class="container about-intro" data-reveal>
-      <div class="img-frame">
-        {picture("team-collaboration", "Abstract illustration representing a collaborative technology team workspace", 640, 434, "assets/images/about")}
-      </div>
-      <div>
+    <div class="{about_intro_class}" data-reveal>
+{who_we_are_visual}      <div>
         <span class="eyebrow">Who We Are</span>
         <h2 style="font-size:28px; margin-bottom:16px;">Engineers and designers, working as one team</h2>
         <p style="margin-bottom:14px;">{studio_intro}</p>
-        <p>We keep our team small and senior on purpose. Every project is led by people who write the code and make the design decisions, which means fewer handoffs, faster iteration, and a lot less lost in translation.</p>
+{team_claim_paragraph}
       </div>
     </div>
   </div>
@@ -127,7 +194,7 @@ body = f'''
           <div class="vtimeline-dot"></div>
           <span class="stage-pill now">Current Stage</span>
           <h3>Startup</h3>
-          <p>Building our foundation — delivering websites, web applications, maintenance, and SEO for early clients with hands-on attention to every project.</p>
+          <p>{current_stage_text}</p>
         </div>
         <div class="vtimeline-item future">
           <div class="vtimeline-dot"></div>
@@ -151,7 +218,7 @@ body = f'''
       <div class="section-head center" data-reveal>
         <!-- <span class="eyebrow cyan">Why DeepAbi</span> -->
         <h2>A partner, not just a vendor</h2>
-        <p style="margin:0 auto;">We keep teams small and senior, communicate directly, and stay invested in your project long after launch.</p>
+        <p style="margin:0 auto;">{partner_lede}</p>
       </div>
       <div class="grid-3" data-reveal>
         <div class="card"><div class="card-icon"><i class="fa-solid fa-comments" aria-hidden="true"></i></div><h3>Direct Communication</h3><p>You work directly with the people building your project — no account-manager layers.</p></div>
@@ -165,7 +232,11 @@ body = f'''
     <div class="container">
       <div class="cta-section" data-reveal>
         <h2>Let's build your next chapter together</h2>
-        <p>Tell us about your project and we'll get back to you within one business day.</p>
+        <!-- The "within one business day" commitment was removed from the Contact page
+             in Phase 3 because the response time has not been confirmed. This copy of it
+             was missed at the time; removed here for the same reason. Restore it only
+             once the actual response time is agreed. -->
+        <p>Tell us about your project and the support you need.</p>
         <a href="contact.html" class="btn btn-accent">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
@@ -175,8 +246,8 @@ body = f'''
 page(
     filename="about.html",
     active="about",
-    title="About DeepAbi Innovations | Software Company in Chennai",
-    description="The mission, vision and values behind DeepAbi Innovations — a software company in Chennai building digital products that create real economic opportunity.",
+    title="About DeepAbi Innovations | Website Development Company in Chennai",
+    description="The mission, vision and values behind DeepAbi Innovations — a website development company in Chennai building digital products that create real economic opportunity.",
     body=body,
     extra_css='<link rel="stylesheet" href="css/pages/about.css">',
     schema=SCHEMA,

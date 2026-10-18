@@ -316,6 +316,15 @@ body.hero-dark #navbar:not(.scrolled) .menu-toggle{color:#fff;}
   position:fixed; inset:0; background:#fff; z-index:1100;
   display:flex; flex-direction:column; padding:24px;
   transform:translateY(-100%); transition:transform 0.4s var(--ease);
+  /* The closed panel used to sit off-screen with visibility:visible, which
+     meant its 20 links and buttons stayed in the tab order and in the
+     accessibility tree. At 390px, 7 of the first 10 Tab stops landed on
+     controls at y = -599 to -822 that nobody could see. visibility:hidden
+     removes them from both, and is delayed until the slide-out finishes so
+     the closing animation still plays - the same pattern already used by
+     .fab-menu and .toast above. */
+  visibility:hidden;
+  transition:transform 0.4s var(--ease), visibility 0s linear 0.4s;
   /* On short viewports (mobile/tablet landscape) the nav links + contact
      block can be taller than the viewport itself. Without this, the excess
      content overflowed past this fixed, off-screen box and bled back into
@@ -323,7 +332,11 @@ body.hero-dark #navbar:not(.scrolled) .menu-toggle{color:#fff;}
      menu was "closed". Scrolling it internally keeps everything contained. */
   overflow-y:auto; -webkit-overflow-scrolling:touch; max-height:100vh; max-height:100dvh;
 }
-#mobile-menu.open{transform:translateY(0);}
+#mobile-menu.open{
+  transform:translateY(0);
+  visibility:visible;
+  transition:transform 0.4s var(--ease), visibility 0s linear 0s;
+}
 .mobile-menu-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;}
 #mobile-menu nav{display:flex; flex-direction:column; gap:4px;}
 #mobile-menu nav a{font-family:var(--font-display); font-size:24px; font-weight:600; padding:16px 4px; border-bottom:1px solid var(--border);}
@@ -478,10 +491,23 @@ footer{background:var(--navy); color:#B8C4D9; padding:0 0 30px;}
 
 .fab-menu{
   display:flex; flex-direction:column; gap:12px; align-items:flex-end;
+  /* opacity:0 and pointer-events:none hid the menu from sight and from the
+     mouse, but NOT from the keyboard: the three links stayed in the tab order,
+     so tabbing through a page stopped three times on controls nobody could
+     see. visibility:hidden takes them out of the tab order and the
+     accessibility tree while closed. It is transitioned with a zero-length
+     delay matched to the slide so the open and close animation is unchanged. */
   opacity:0; transform:translateY(16px) scale(0.9); pointer-events:none;
-  transition:opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  visibility:hidden;
+  transition:opacity 0.35s var(--ease), transform 0.35s var(--ease),
+             visibility 0s linear 0.35s;
 }
-.contact-fab.open .fab-menu{opacity:1; transform:translateY(0) scale(1); pointer-events:auto;}
+.contact-fab.open .fab-menu{
+  opacity:1; transform:translateY(0) scale(1); pointer-events:auto;
+  visibility:visible;
+  transition:opacity 0.35s var(--ease), transform 0.35s var(--ease),
+             visibility 0s linear 0s;
+}
 .contact-fab.open .fab-item:nth-child(1){transition-delay:0.03s;}
 /* Don't float the persistent contact button over the full-screen mobile
    nav — it already repeats the same phone/WhatsApp/email links, and #mobile-menu
@@ -522,9 +548,22 @@ footer{background:var(--navy); color:#B8C4D9; padding:0 0 30px;}
   position:fixed; bottom:28px; right:28px; background:var(--navy); color:#fff;
   padding:16px 22px; border-radius:12px; font-size:14px; font-weight:600;
   display:flex; align-items:center; gap:10px; box-shadow:var(--shadow-lg);
-  transform:translateY(140%); transition:transform 0.4s var(--ease); z-index:2000;
+  /* Hidden state. translateY(140%) was 140% of the toast's own ~55px height,
+     about 77px, against an element sitting 28px off the bottom edge - 6px short
+     of clearing the viewport, so a sliver of an untriggered success message was
+     visible at the bottom of every page. calc(100% + 48px) always clears the
+     full height plus the 28px offset whatever the message length, with room to
+     spare for the drop shadow. visibility is belt-and-braces: it keeps the
+     toast out of the accessibility tree and out of hit-testing while inactive,
+     and it is switched with a zero-length transition delayed by the slide so
+     the existing 0.4s animation plays unchanged in both directions. */
+  transform:translateY(calc(100% + 48px)); visibility:hidden;
+  transition:transform 0.4s var(--ease), visibility 0s linear 0.4s; z-index:2000;
 }
-.toast.show{transform:translateY(0);}
+.toast.show{
+  transform:translateY(0); visibility:visible;
+  transition:transform 0.4s var(--ease), visibility 0s linear 0s;
+}
 .toast i{color:var(--mint);}
 
 /* ---------- Breadcrumb / page header ---------- */
@@ -543,6 +582,25 @@ footer{background:var(--navy); color:#B8C4D9; padding:0 0 30px;}
 /* ---------- Utility ---------- */
 .mt-0{margin-top:0;}
 .center{text-align:center;}
+/* Contextual links inside body copy.
+   The global anchor style is built for navigation and buttons - it inherits
+   the surrounding colour and carries no underline - so a link dropped into a
+   paragraph was indistinguishable from the text around it (measured: same
+   computed colour as its parent, text-decoration none, weight 400). This class
+   is applied ONLY to contextual links added inside prose, so nothing that
+   already existed changes appearance. */
+.inline-link{
+  color:var(--violet-ink); text-decoration:underline;
+  text-underline-offset:3px; text-decoration-thickness:1px;
+  transition:color 0.2s var(--ease);
+}
+.inline-link:hover{color:var(--violet);}
+.inline-link:focus-visible{outline:2px solid var(--cyan); outline-offset:3px; border-radius:2px;}
+/* On the dark CTA panels and the dark hero body, violet has too little
+   contrast - the brand cyan is the readable counterpart there. */
+.cta-section .inline-link, .hero-dark .hero .inline-link{color:var(--cyan);}
+.cta-section .inline-link:hover, .hero-dark .hero .inline-link:hover{color:#fff;}
+
 .sr-only{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
   clip:rect(0,0,0,0); white-space:nowrap; border:0;

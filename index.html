@@ -4,25 +4,25 @@
 <script>document.documentElement.className=document.documentElement.className.replace('no-js','js');</script>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DeepAbi Innovations | Software Development Company in Chennai</title>
-<meta name="description" content="DeepAbi Innovations builds professional business, corporate, landing page and portfolio websites for businesses in Mogappair and across Chennai, with maintenance, SEO and performance support." />
-<meta name="keywords" content="software development company in Chennai, software company in Chennai, custom software development Chennai, application development company Chennai, website development company in Chennai, web application development Chennai, mobile app development Chennai, desktop application development Chennai, SaaS development Chennai, AI automation solutions Chennai, business automation Chennai, software maintenance Chennai, software development company in Mogappair, website development company in Mogappair, software company Ambattur, software company Anna Nagar, DeepAbi Innovations, DeepAbi" />
+<title>DeepAbi Innovations | Website Development Company in Chennai</title>
+<meta name="description" content="DeepAbi Innovations builds business, corporate, landing page and portfolio websites for businesses in Mogappair and across Chennai, with maintenance, SEO and performance support." />
+<meta name="keywords" content="website development company in Chennai, website development company in Mogappair, DeepAbi Innovations, DeepAbi" />
 <meta name="author" content="DeepAbi" />
 <link rel="canonical" href="https://www.deepabi.com" />
 <meta name="robots" content="index, follow" />
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
-<meta property="og:title" content="DeepAbi Innovations | Software Development Company in Chennai" />
-<meta property="og:description" content="DeepAbi Innovations builds professional business, corporate, landing page and portfolio websites for businesses in Mogappair and across Chennai, with maintenance, SEO and performance support." />
+<meta property="og:title" content="DeepAbi Innovations | Website Development Company in Chennai" />
+<meta property="og:description" content="DeepAbi Innovations builds business, corporate, landing page and portfolio websites for businesses in Mogappair and across Chennai, with maintenance, SEO and performance support." />
 <meta property="og:url" content="https://www.deepabi.com" />
 <meta property="og:image" content="https://www.deepabi.com/assets/images/backgrounds/og-social-banner.jpg" />
 <meta property="og:site_name" content="DeepAbi" />
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="DeepAbi Innovations | Software Development Company in Chennai" />
-<meta name="twitter:description" content="DeepAbi Innovations builds professional business, corporate, landing page and portfolio websites for businesses in Mogappair and across Chennai, with maintenance, SEO and performance support." />
+<meta name="twitter:title" content="DeepAbi Innovations | Website Development Company in Chennai" />
+<meta name="twitter:description" content="DeepAbi Innovations builds business, corporate, landing page and portfolio websites for businesses in Mogappair and across Chennai, with maintenance, SEO and performance support." />
 <meta name="twitter:image" content="https://www.deepabi.com/assets/images/backgrounds/og-social-banner.jpg" />
 
 <!-- Favicons -->
@@ -53,7 +53,7 @@
   "alternateName": "DeepAbi",
   "url": "https://www.deepabi.com",
   "logo": "https://www.deepabi.com/assets/images/logos/favicon-512.png",
-  "description": "DeepAbi Innovations is a software development company in Chennai building websites, web and mobile applications, desktop and custom software, SaaS products, AI automation and software maintenance.",
+  "description": "DeepAbi Innovations is a website development company in Chennai building business, corporate, landing page and portfolio websites, with website maintenance, SEO and performance optimisation.",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Mogappair, Chennai",
@@ -62,8 +62,14 @@
   },
   "areaServed": [
     { "@type": "Place", "name": "Mogappair, Chennai" },
+    { "@type": "Place", "name": "Mogappair East, Chennai" },
+    { "@type": "Place", "name": "Mogappair West, Chennai" },
+    { "@type": "Place", "name": "Nolambur, Chennai" },
     { "@type": "Place", "name": "Ambattur, Chennai" },
     { "@type": "Place", "name": "Anna Nagar, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar East, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar West, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar West Extension, Chennai" },
     { "@type": "City", "name": "Chennai" }
   ],
   "knowsAbout": [
@@ -255,11 +261,33 @@
     </div>
 
     <div class="container hero-grid">
-      <div class="hero-content" data-reveal>
+      <!-- The three hero blocks deliberately carry no data-reveal. The entrance
+           animation hides its target with opacity:0 until JavaScript marks it
+           visible, which for above-the-fold content delays the largest paint by
+           roughly a second (measured: LCP 3096ms -> 2536ms at 375px and 3908ms
+           -> 2904ms at 1440px on a throttled connection). Below the fold the
+           reveal costs nothing and is left exactly as it was. -->
+      <div class="hero-content">
         <span class="eyebrow gold"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> Driving Economic Empowerment Through Technology</span>
+        <!-- The heading text ships in the markup, so it is complete and readable
+             with no JavaScript and under reduced motion. js/pages/home.js reads
+             it from the DOM and retypes it, so the two can never drift apart.
+             The caret is an empty span drawn entirely in CSS: it holds no text
+             node and no generated content, so it stays out of the accessible
+             heading name and out of the page's text. -->
         <h1 class="typing-heading">
-          <span id="typingTarget" class="grad-text" aria-hidden="true"></span><span class="typing-cursor" aria-hidden="true">|</span>
-          <span class="sr-only">Building Intelligent Digital Solutions</span>
+          <!-- Space reserver. Holds the complete heading so the <h1> always occupies
+               the height of the finished line-wrap, whatever the typing animation is
+               showing at that instant. It is a real text node, so it re-wraps with the
+               viewport, with the font once it loads, and with browser zoom - there is no
+               fixed height anywhere and nothing can be clipped. It is hidden with
+               visibility, which keeps it out of the rendered page, out of the
+               accessibility tree and out of the page's text, so the heading a visitor or
+               a screen reader gets is still a single complete one. The inline
+               visibility is a safety net: if css/pages/home.css ever fails to load, the
+               reserver stays hidden instead of printing the heading twice. -->
+          <span class="typing-reserve" aria-hidden="true" style="visibility:hidden">Websites Built Around Your Business</span>
+          <span class="typing-live"><span id="typingTarget" class="grad-text">Websites Built Around Your Business</span><span class="typing-cursor" aria-hidden="true"></span></span>
         </h1>
         <p class="hero-sub">We build modern, scalable websites &mdash; from a single landing page to a complete corporate site &mdash; designed to load fast, read well on a phone and bring you enquiries.</p>
 
@@ -269,18 +297,19 @@
         </div>
       </div>
 
-      <div class="hero-visual" id="heroParallax" data-reveal="scale">
+      <div class="hero-visual" id="heroParallax">
         <div class="hero-visual-glow" aria-hidden="true"></div>
         <picture class="hero-illustration-img">
+        <source srcset="assets/images/home/avif/deepabi-concept.avif" type="image/avif">
         <source srcset="assets/images/home/webp/deepabi-concept.webp" type="image/webp">
         <source srcset="assets/images/home/png/deepabi-concept.png" type="image/png">
-        <img src="assets/images/home/jpg/deepabi-concept.jpg" alt="Premium illustration of the DeepAbi brand concept, symbolizing economic empowerment and ambition through connected innovation and growth" width="1024" height="1536" loading="eager" fetchpriority="high" decoding="async">
+        <img src="assets/images/home/png/deepabi-concept.png" alt="Premium illustration of the DeepAbi brand concept, symbolizing economic empowerment and ambition through connected innovation and growth" width="800" height="1200" loading="eager" fetchpriority="high" decoding="async">
       </picture>
       </div>
     </div>
 
     <div class="container">
-      <div class="hero-mv-grid" data-reveal>
+      <div class="hero-mv-grid">
         <div class="hero-mv-card">
           <div class="hero-mv-icon"><i class="fa-solid fa-bullseye" aria-hidden="true"></i></div>
           <span class="hero-mv-label">Mission</span>
@@ -296,14 +325,14 @@
       </div>
     </div>
 
-    <div class="container">
-      <div class="stat-strip hero-stats" data-reveal>
-        <div class="stat-item"><div class="num"><span class="counter" data-target="12">0</span><span class="grad-text">+</span></div><div class="label">Projects Delivered</div></div>
-        <div class="stat-item"><div class="num"><span class="counter" data-target="2">0</span><span class="grad-text">+</span></div><div class="label">Years Building</div></div>
-        <div class="stat-item"><div class="num"><span class="counter" data-target="24">0</span><span class="grad-text">/7</span></div><div class="label">Support &amp; Monitoring</div></div>
-        <div class="stat-item"><div class="num"><span class="counter" data-target="15">0</span><span class="grad-text">+</span></div><div class="label">Technologies Mastered</div></div>
-      </div>
-    </div>
+    <!-- The hero statistics strip was removed here. It animated four counters -
+         12+ Projects Delivered, 2+ Years Building, 24/7 Support & Monitoring and
+         15+ Technologies Mastered - none of which was evidenced, and the 24/7
+         figure was a service-level promise rather than a statistic. No
+         replacement numbers have been invented. If verified figures are ever
+         available, the strip was a `.stat-strip.hero-stats` grid of
+         `.stat-item` blocks, each holding a `span.counter[data-target]`
+         animated by initCounters() in js/common.js. -->
 
     <a href="#what-we-build" class="scroll-indicator" aria-label="Scroll to explore">
       <span>Scroll</span>
@@ -381,41 +410,6 @@
         <p style="margin:0 auto;">Our websites are carefully designed, tested and optimized across desktop, laptop, tablet and mobile devices to deliver a seamless user experience on every screen.</p>
       </div>
 
-      <div class="device-stack device-stack-large" id="deviceStack" data-reveal="scale" role="group" aria-label="Showcase cycling through desktop, tablet, and mobile presentations of the DeepAbi brand" aria-live="off">
-        <div class="device-stack-card" data-role="desktop">
-          <div class="device-stack-frame">
-            <picture>
-        <source srcset="assets/images/home/avif/deepabi-desktop.avif" type="image/avif">
-        <source srcset="assets/images/home/webp/deepabi-desktop.webp" type="image/webp">
-        <source srcset="assets/images/home/png/deepabi-desktop.png" type="image/png">
-        <img src="assets/images/home/jpg/deepabi-desktop.jpg" alt="DeepAbi website showcased on a desktop display" width="640" height="427" loading="lazy" decoding="async">
-      </picture>
-          </div>
-          <span class="device-stack-label"><i class="fa-solid fa-desktop" aria-hidden="true"></i> Desktop</span>
-        </div>
-        <div class="device-stack-card" data-role="tablet">
-          <div class="device-stack-frame">
-            <picture>
-        <source srcset="assets/images/home/avif/deepabi-tablet.avif" type="image/avif">
-        <source srcset="assets/images/home/webp/deepabi-tablet.webp" type="image/webp">
-        <source srcset="assets/images/home/png/deepabi-tablet.png" type="image/png">
-        <img src="assets/images/home/jpg/deepabi-tablet.jpg" alt="DeepAbi website showcased on a tablet display" width="640" height="427" loading="lazy" decoding="async">
-      </picture>
-          </div>
-          <span class="device-stack-label"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Tablet</span>
-        </div>
-        <div class="device-stack-card" data-role="mobile">
-          <div class="device-stack-frame">
-            <picture>
-        <source srcset="assets/images/home/avif/deepabi-mobile.avif" type="image/avif">
-        <source srcset="assets/images/home/webp/deepabi-mobile.webp" type="image/webp">
-        <source srcset="assets/images/home/png/deepabi-mobile.png" type="image/png">
-        <img src="assets/images/home/jpg/deepabi-mobile.jpg" alt="DeepAbi website showcased on a mobile display" width="640" height="427" loading="lazy" decoding="async">
-      </picture>
-          </div>
-          <span class="device-stack-label"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> Mobile</span>
-        </div>
-      </div>
 
       <div class="responsive-content" data-reveal>
         <h3 class="responsive-heading">Responsive Website Design</h3>
@@ -490,7 +484,7 @@
         <source srcset="assets/images/projects/avif/featured-cardsession-platform.avif" type="image/avif">
         <source srcset="assets/images/projects/webp/featured-cardsession-platform.webp" type="image/webp">
         <source srcset="assets/images/projects/png/featured-cardsession-platform.png" type="image/png">
-        <img src="assets/images/projects/jpg/featured-cardsession-platform.jpg" alt="Abstract mockup illustration of a commercial hardware and industrial supply website" width="640" height="434" loading="lazy" decoding="async">
+        <img src="assets/images/projects/jpg/featured-cardsession-platform.jpg" alt="Abstract mockup illustration of a commercial hardware and industrial supply website" width="640" height="446" loading="lazy" decoding="async">
       </picture>
         </div>
         <div class="featured-copy">
@@ -509,90 +503,12 @@
     </div>
   </section>
 
-  <!-- ============ TESTIMONIALS (carousel) ============ -->
-  <section class="section section-alt">
-    <div class="container">
-      <div class="section-head center" data-reveal>
-        <!-- <span class="eyebrow">Client Feedback</span> -->
-        <h2>Testimonials</h2>
-        <p style="margin:0 auto;">What clients say about working with us.</p>
-      </div>
-      <div class="testimonial-carousel" data-reveal id="testimonialCarousel">
-        <button type="button" class="testimonial-arrow prev" id="testimonialPrev" aria-label="Previous testimonial"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
-        <div class="testimonial-track" id="testimonialTrack">
-          <div class="testimonial-slide active">
-            <div class="testimonial-card">
-              <i class="fa-solid fa-quote-left testimonial-quote-mark" aria-hidden="true"></i>
-              <div class="testimonial-stars"><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i></div>
-              <p class="quote">"DeepAbi rebuilt our site in under six weeks and it finally loads fast on mobile. Our contact form submissions doubled within the first month."</p>
-              <div class="testimonial-person">
-                <picture class="avatar-img">
-        <source srcset="assets/images/testimonials/webp/client-avatar-1.webp" type="image/webp">
-        <source srcset="assets/images/testimonials/png/client-avatar-1.png" type="image/png">
-        <img src="assets/images/testimonials/jpg/client-avatar-1.jpg" alt="Portrait placeholder for Aarav Rao" width="56" height="56" loading="lazy" decoding="async">
-      </picture>
-                <div><h3>Aarav Rao</h3><span>Founder, Northline Consulting</span></div>
-              </div>
-            </div>
-          </div>
-          <div class="testimonial-slide">
-            <div class="testimonial-card">
-              <i class="fa-solid fa-quote-left testimonial-quote-mark" aria-hidden="true"></i>
-              <div class="testimonial-stars"><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i></div>
-              <p class="quote">"What stood out was the communication. We always knew exactly what stage the project was in, and nothing shipped without our sign-off."</p>
-              <div class="testimonial-person">
-                <picture class="avatar-img">
-        <source srcset="assets/images/testimonials/webp/client-avatar-2.webp" type="image/webp">
-        <source srcset="assets/images/testimonials/png/client-avatar-2.png" type="image/png">
-        <img src="assets/images/testimonials/jpg/client-avatar-2.jpg" alt="Portrait placeholder for Priya Kapoor" width="56" height="56" loading="lazy" decoding="async">
-      </picture>
-                <div><h3>Priya Kapoor</h3><span>Marketing Lead, Verdant Foods Co.</span></div>
-              </div>
-            </div>
-          </div>
-          <div class="testimonial-slide">
-            <div class="testimonial-card">
-              <i class="fa-solid fa-quote-left testimonial-quote-mark" aria-hidden="true"></i>
-              <div class="testimonial-stars"><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i></div>
-              <p class="quote">"They handled our SEO migration without losing a single ranking position, which is more than I can say for the last two agencies we worked with."</p>
-              <div class="testimonial-person">
-                <picture class="avatar-img">
-        <source srcset="assets/images/testimonials/webp/client-avatar-3.webp" type="image/webp">
-        <source srcset="assets/images/testimonials/png/client-avatar-3.png" type="image/png">
-        <img src="assets/images/testimonials/jpg/client-avatar-3.jpg" alt="Portrait placeholder for Samuel Ntuli" width="56" height="56" loading="lazy" decoding="async">
-      </picture>
-                <div><h3>Samuel Ntuli</h3><span>Operations Director, Harborview Logistics</span></div>
-              </div>
-            </div>
-          </div>
-          <div class="testimonial-slide">
-            <div class="testimonial-card">
-              <i class="fa-solid fa-quote-left testimonial-quote-mark" aria-hidden="true"></i>
-              <div class="testimonial-stars"><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i><i class="fa-solid fa-star" aria-hidden="true"></i></div>
-              <p class="quote">"Our new landing page converts noticeably better and the DeepAbi team kept us updated every single week without us having to chase them."</p>
-              <div class="testimonial-person">
-                <picture class="avatar-img">
-        <source srcset="assets/images/testimonials/webp/client-avatar-4.webp" type="image/webp">
-        <source srcset="assets/images/testimonials/png/client-avatar-4.png" type="image/png">
-        <img src="assets/images/testimonials/jpg/client-avatar-4.jpg" alt="Portrait placeholder for Meera Joshi" width="56" height="56" loading="lazy" decoding="async">
-      </picture>
-                <div><h3>Meera Joshi</h3><span>Growth Lead, Fieldstone Analytics</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <button type="button" class="testimonial-arrow next" id="testimonialNext" aria-label="Next testimonial"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
-        <div class="testimonial-dots" id="testimonialDots" role="tablist" aria-label="Testimonial navigation"></div>
-      </div>
-    </div>
-  </section>
-
   <!-- ============ CTA ============ -->
   <section class="section" style="padding-top:0;">
     <div class="container">
       <div class="cta-section" data-reveal>
         <h2>Ready to build your next digital experience?</h2>
-        <p>Tell us about your project and we'll get back to you within one business day with next steps.</p>
+        <p>Tell us about your website project and the support you need. We build websites for businesses in Mogappair, Nolambur and Anna Nagar.</p>
         <a href="contact.html" class="btn btn-accent">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
@@ -617,7 +533,7 @@
             <img src="assets/images/logos_icons/web/logo-plate.png" alt="DeepAbi Innovations" width="288" height="132">
           </picture>
         </div>
-        <p>Driving Economic Empowerment Through Technology. Based in Mogappair, DeepAbi Innovations builds websites, applications and custom software for businesses across Ambattur, Anna Nagar and Chennai.</p>
+        <p>Driving Economic Empowerment Through Technology. Based in Mogappair, DeepAbi Innovations builds professional websites for businesses across Ambattur, Anna Nagar and Chennai.</p>
         <div class="footer-social">
           <a href="https://www.instagram.com/deepabi_innovations/" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
           <a href="https://www.facebook.com/profile.php?id=61593491164948" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
@@ -660,7 +576,15 @@
   </div>
 </footer>
 
-<div class="toast" id="toast"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span id="toastMsg">Message sent successfully!</span></div>
+<!-- The toast has exactly one consumer: the contact form, which does not
+     send anything - it hands the enquiry to the visitor's own mail client.
+     So the shipped default must not claim a delivery. It previously read
+     "Message sent successfully!" with a green tick, which would have been
+     a false statement in any state that showed the toast before
+     js/pages/contact.js had rewritten it. The default is now the honest
+     hand-off wording and the icon is an envelope, not a success tick.
+     role="status" lets assistive technology announce it when it appears. -->
+<div class="toast" id="toast" role="status" aria-live="polite"><i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i><span id="toastMsg">Your email app should open with this enquiry ready to send.</span></div>
 
 <div class="contact-fab" id="contactFab">
   <div class="fab-menu" id="fabMenu" role="menu" aria-hidden="true">

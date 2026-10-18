@@ -98,12 +98,35 @@ function initTypingHeading() {
   const target = document.getElementById('typingTarget');
   if (!target) return;
 
-  const FULL_TEXT = 'Building Intelligent Digital Solutions';
+  // The heading text is authored in the HTML, so the page reads correctly with
+  // no JavaScript. Read it back from the DOM rather than repeating it here:
+  // the generator stays the single source of the wording.
+  const FULL_TEXT = (target.textContent || '').trim();
+  if (!FULL_TEXT) return;
+
+  const heading = target.closest('.typing-heading');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Leave the heading exactly as authored when motion is not wanted. The caret
+  // stays hidden because .is-typing is never added.
   if (reduceMotion) {
     target.textContent = FULL_TEXT;
     return;
+  }
+
+  // Only now does the decorative caret appear.
+  if (heading) heading.classList.add('is-typing');
+
+  // While the text is being retyped it is a moving target, so hide it from
+  // assistive technology and leave one stable, complete copy in its place.
+  // Both are added here, not in the markup, so the no-JavaScript page keeps a
+  // single plain heading with nothing duplicated.
+  target.setAttribute('aria-hidden', 'true');
+  if (heading && !heading.querySelector('.typing-sr-text')) {
+    const srText = document.createElement('span');
+    srText.className = 'sr-only typing-sr-text';
+    srText.textContent = FULL_TEXT;
+    heading.appendChild(srText);
   }
 
   const TYPE_SPEED = 55;      // ms per character while typing

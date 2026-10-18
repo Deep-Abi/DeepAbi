@@ -20,6 +20,20 @@ else:
 # Indented to sit cleanly inside the surrounding JSON-LD block.
 KNOWS_ABOUT = _json.dumps(_knows, indent=2).replace('\n', '\n  ')
 
+# Organization.description has to agree with what is actually public, the same
+# way knowsAbout already does. While only Website Development is switched on it
+# must not advertise the seven hidden services. Both strings are JSON string
+# contents, so they carry no quotes or backslashes. Restoring the services
+# restores the full description.
+if WEBSITE_ONLY_MODE:
+    ORG_DESCRIPTION = ("DeepAbi Innovations is a website development company in Chennai "
+                       "building business, corporate, landing page and portfolio websites, "
+                       "with website maintenance, SEO and performance optimisation.")
+else:
+    ORG_DESCRIPTION = ("DeepAbi Innovations is a software development company in Chennai "
+                       "building websites, web and mobile applications, desktop and custom "
+                       "software, SaaS products, AI automation and software maintenance.")
+
 SCHEMA = '''<script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -28,7 +42,7 @@ SCHEMA = '''<script type="application/ld+json">
   "alternateName": "DeepAbi",
   "url": "https://www.deepabi.com",
   "logo": "https://www.deepabi.com/assets/images/logos/favicon-512.png",
-  "description": "DeepAbi Innovations is a software development company in Chennai building websites, web and mobile applications, desktop and custom software, SaaS products, AI automation and software maintenance.",
+  "description": "__ORG_DESCRIPTION__",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Mogappair, Chennai",
@@ -37,8 +51,14 @@ SCHEMA = '''<script type="application/ld+json">
   },
   "areaServed": [
     { "@type": "Place", "name": "Mogappair, Chennai" },
+    { "@type": "Place", "name": "Mogappair East, Chennai" },
+    { "@type": "Place", "name": "Mogappair West, Chennai" },
+    { "@type": "Place", "name": "Nolambur, Chennai" },
     { "@type": "Place", "name": "Ambattur, Chennai" },
     { "@type": "Place", "name": "Anna Nagar, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar East, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar West, Chennai" },
+    { "@type": "Place", "name": "Anna Nagar West Extension, Chennai" },
     { "@type": "City", "name": "Chennai" }
   ],
   "knowsAbout": __KNOWS_ABOUT__,
@@ -60,11 +80,80 @@ SCHEMA = '''<script type="application/ld+json">
 </script>'''
 
 SCHEMA = SCHEMA.replace('__KNOWS_ABOUT__', KNOWS_ABOUT)
+SCHEMA = SCHEMA.replace('__ORG_DESCRIPTION__', ORG_DESCRIPTION)
 
-# The home hero is the largest paint on the site. Its AVIF encode is 166KB
-# against 73KB for the JPEG, so AVIF is deliberately not offered for this one
-# image - serving it would make the hero heavier, not lighter.
-HERO_SKIP = ("avif",)
+# The home hero is the largest paint on the site.
+#
+# AVIF used to be skipped here on the grounds that its encode was 166KB against
+# 73KB for the JPEG. That is no longer true of the files on disk: the AVIF was
+# regenerated at some point and now measures 64.6KB against 168.7KB for the
+# WebP, at the same 800x1200 size and with the same transparent canvas (73.2%
+# of the canvas transparent in both; opaque content occupies the same rows).
+# It decodes cleanly in Chromium and renders at an identical size, so AVIF is
+# now offered first and the hero's largest image drops by ~104KB.
+#
+# "jpg" stays skipped, so the <img> falls back to the PNG. The three
+# derivatives are not interchangeable for this image: the WebP and the PNG are
+# both 800x1200 (2:3) with a transparent background, while the JPEG is
+# 1200x1100 - a different crop, a different aspect ratio and an opaque blue
+# background. Any browser that fell through to the JPEG would have rendered a
+# differently shaped, opaque picture inside a box reserved at 2:3, and the
+# hero's stacked layout further assumes the transparent canvas. The PNG matches
+# the WebP exactly, so the fallback is consistent with what modern browsers
+# actually load. Replace the JPEG with a matching 2:3 export to re-enable it.
+#
+# Order served: AVIF (64.6KB) -> WebP (168.7KB) -> PNG fallback (677KB).
+HERO_SKIP = ("jpg",)
+
+# ---------------------------------------------------------------------------
+# Device showcase: visibility follows the service configuration.
+#
+# The three screenshots inside this showcase are mock-ups of the DeepAbi
+# homepage, and the mock-up text is baked into the artwork. It still reads
+# "Building Intelligent Digital Solutions" - the heading this site replaced -
+# and "modern, scalable and high-performance websites and applications", which
+# offers applications the site deliberately does not sell while only Website
+# Development is public. Neither line can be corrected without regenerating the
+# artwork.
+#
+# So the showcase is hidden in website-only mode. Nothing is deleted: all three
+# assets keep every format on disk, the markup below is preserved verbatim, and
+# the showcase returns on its own as soon as more than one service is public.
+# The flag is derived from SERVICE_REGISTRY, not hand-set, so it cannot drift.
+#
+# The section around it is unaffected - its heading, lede and the Responsive
+# Website Design block below are all independent of the showcase, so removing
+# the element removes its box and its margins with it and leaves no gap.
+SHOW_DEVICE_SHOWCASE = not WEBSITE_ONLY_MODE
+
+DEVICE_SHOWCASE = f'''      <!-- Declared 640x427 is correct here: the assets are 1200x800 (desktop)
+           and 1200x801 (tablet, mobile), so the declared ratio 1.4988 matches
+           the real 1.5 to within 0.08%. The frames also set their own width and
+           height in CSS with object-fit:cover, so these attributes have no
+           layout effect either way. Left as they are. -->
+      <div class="device-stack device-stack-large" id="deviceStack" data-reveal="scale" role="group" aria-label="Showcase cycling through desktop, tablet, and mobile presentations of the DeepAbi brand" aria-live="off">
+        <div class="device-stack-card" data-role="desktop">
+          <div class="device-stack-frame">
+            {picture("deepabi-desktop", "DeepAbi website showcased on a desktop display", 640, 427, "assets/images/home")}
+          </div>
+          <span class="device-stack-label"><i class="fa-solid fa-desktop" aria-hidden="true"></i> Desktop</span>
+        </div>
+        <div class="device-stack-card" data-role="tablet">
+          <div class="device-stack-frame">
+            {picture("deepabi-tablet", "DeepAbi website showcased on a tablet display", 640, 427, "assets/images/home")}
+          </div>
+          <span class="device-stack-label"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Tablet</span>
+        </div>
+        <div class="device-stack-card" data-role="mobile">
+          <div class="device-stack-frame">
+            {picture("deepabi-mobile", "DeepAbi website showcased on a mobile display", 640, 427, "assets/images/home")}
+          </div>
+          <span class="device-stack-label"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> Mobile</span>
+        </div>
+      </div>
+'''
+
+device_showcase = DEVICE_SHOWCASE if SHOW_DEVICE_SHOWCASE else ""
 
 WHAT_WE_BUILD = [
     ("fa-solid fa-window-maximize", "Website Development", "Professional websites for businesses, companies and brands — from landing pages and portfolios to complete corporate websites.", "website-development"),
@@ -140,27 +229,70 @@ def testimonial_slide(active, avatar, alt, quote, name, role):
           </div>'''
 
 
-TESTIMONIALS = [
-    ("client-avatar-1", "Portrait placeholder for Aarav Rao", "DeepAbi rebuilt our site in under six weeks and it finally loads fast on mobile. Our contact form submissions doubled within the first month.", "Aarav Rao", "Founder, Northline Consulting"),
-    ("client-avatar-2", "Portrait placeholder for Priya Kapoor", "What stood out was the communication. We always knew exactly what stage the project was in, and nothing shipped without our sign-off.", "Priya Kapoor", "Marketing Lead, Verdant Foods Co."),
-    ("client-avatar-3", "Portrait placeholder for Samuel Ntuli", "They handled our SEO migration without losing a single ranking position, which is more than I can say for the last two agencies we worked with.", "Samuel Ntuli", "Operations Director, Harborview Logistics"),
-    ("client-avatar-4", "Portrait placeholder for Meera Joshi", "Our new landing page converts noticeably better and the DeepAbi team kept us updated every single week without us having to chase them.", "Meera Joshi", "Growth Lead, Fieldstone Analytics"),
-]
+# Verified client testimonials only.
+#
+# This list is EMPTY on purpose. It previously held four entries attributed to
+# named people at named companies (Aarav Rao / Northline Consulting, Priya
+# Kapoor / Verdant Foods Co., Samuel Ntuli / Harborview Logistics, Meera Joshi
+# / Fieldstone Analytics), including a measurable claim that contact form
+# submissions doubled. None of them was real, so all four were removed.
+#
+# Add a tuple here ONLY for a testimonial a real client has actually given and
+# approved for publication:
+#
+#     (avatar_name, avatar_alt, quote, person_name, person_role)
+#
+# The whole visible section below is generated from this list. With the list
+# empty, no heading, carousel, arrows, dots or spacing are emitted at all, so
+# the page has no placeholder and no gap. Adding the first verified entry
+# brings the section back with no other change needed.
+TESTIMONIALS = []
 
 testimonial_slides_html = "\n          ".join(
     testimonial_slide(i == 0, *t) for i, t in enumerate(TESTIMONIALS)
 )
 
-# Visible hero copy and the meta description describe what is actually on
-# offer. Both revert with the registry flags.
+# The testimonials section exists only when there is something verified to put
+# in it. No entries means no section at all - not an empty heading or carousel.
+if TESTIMONIALS:
+    testimonials_section = f'''
+
+  <!-- ============ TESTIMONIALS (carousel) ============ -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head center" data-reveal>
+        <!-- <span class="eyebrow">Client Feedback</span> -->
+        <h2>Testimonials</h2>
+        <p style="margin:0 auto;">What clients say about working with us.</p>
+      </div>
+      <div class="testimonial-carousel" data-reveal id="testimonialCarousel">
+        <button type="button" class="testimonial-arrow prev" id="testimonialPrev" aria-label="Previous testimonial"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+        <div class="testimonial-track" id="testimonialTrack">
+          {testimonial_slides_html}
+        </div>
+        <button type="button" class="testimonial-arrow next" id="testimonialNext" aria-label="Next testimonial"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+        <div class="testimonial-dots" id="testimonialDots" role="tablist" aria-label="Testimonial navigation"></div>
+      </div>
+    </div>
+  </section>
+'''
+else:
+    testimonials_section = ""
+
+# Visible hero copy, the H1 and the meta description describe what is actually
+# on offer. All three revert with the registry flags.
 if WEBSITE_ONLY_MODE:
+    hero_heading = "Websites Built Around Your Business"
     hero_sub = ("We build modern, scalable websites &mdash; from a single landing page to a "
                 "complete corporate site &mdash; designed to load fast, read well on a phone "
                 "and bring you enquiries.")
-    seo_desc = ("DeepAbi Innovations builds professional business, corporate, landing page and "
-                "portfolio websites for businesses in Mogappair and across Chennai, with "
-                "maintenance, SEO and performance support.")
+    seo_desc = ("DeepAbi Innovations builds business, corporate, landing page and portfolio "
+                "websites for businesses in Mogappair and across Chennai, with maintenance, "
+                "SEO and performance support.")
+    seo_title = "DeepAbi Innovations | Website Development Company in Chennai"
 else:
+    hero_heading = "Building Intelligent Digital Solutions"
+    seo_title = "DeepAbi Innovations | Software Development Company in Chennai"
     hero_sub = ("We build modern, scalable and intelligent digital products &mdash; from custom "
                 "website development to enterprise web applications &mdash; that help businesses "
                 "grow faster.")
@@ -178,11 +310,33 @@ body = f'''
     </div>
 
     <div class="container hero-grid">
-      <div class="hero-content" data-reveal>
+      <!-- The three hero blocks deliberately carry no data-reveal. The entrance
+           animation hides its target with opacity:0 until JavaScript marks it
+           visible, which for above-the-fold content delays the largest paint by
+           roughly a second (measured: LCP 3096ms -> 2536ms at 375px and 3908ms
+           -> 2904ms at 1440px on a throttled connection). Below the fold the
+           reveal costs nothing and is left exactly as it was. -->
+      <div class="hero-content">
         <span class="eyebrow gold"><i class="fa-solid fa-sparkles" aria-hidden="true"></i> {TAGLINE_PRIMARY}</span>
+        <!-- The heading text ships in the markup, so it is complete and readable
+             with no JavaScript and under reduced motion. js/pages/home.js reads
+             it from the DOM and retypes it, so the two can never drift apart.
+             The caret is an empty span drawn entirely in CSS: it holds no text
+             node and no generated content, so it stays out of the accessible
+             heading name and out of the page's text. -->
         <h1 class="typing-heading">
-          <span id="typingTarget" class="grad-text" aria-hidden="true"></span><span class="typing-cursor" aria-hidden="true">|</span>
-          <span class="sr-only">Building Intelligent Digital Solutions</span>
+          <!-- Space reserver. Holds the complete heading so the <h1> always occupies
+               the height of the finished line-wrap, whatever the typing animation is
+               showing at that instant. It is a real text node, so it re-wraps with the
+               viewport, with the font once it loads, and with browser zoom - there is no
+               fixed height anywhere and nothing can be clipped. It is hidden with
+               visibility, which keeps it out of the rendered page, out of the
+               accessibility tree and out of the page's text, so the heading a visitor or
+               a screen reader gets is still a single complete one. The inline
+               visibility is a safety net: if css/pages/home.css ever fails to load, the
+               reserver stays hidden instead of printing the heading twice. -->
+          <span class="typing-reserve" aria-hidden="true" style="visibility:hidden">{hero_heading}</span>
+          <span class="typing-live"><span id="typingTarget" class="grad-text">{hero_heading}</span><span class="typing-cursor" aria-hidden="true"></span></span>
         </h1>
         <p class="hero-sub">{hero_sub}</p>
 
@@ -192,19 +346,19 @@ body = f'''
         </div>
       </div>
 
-      <div class="hero-visual" id="heroParallax" data-reveal="scale">
+      <div class="hero-visual" id="heroParallax">
         <div class="hero-visual-glow" aria-hidden="true"></div>
         {picture(
             "deepabi-concept",
             "Premium illustration of the DeepAbi brand concept, symbolizing economic empowerment and ambition through connected innovation and growth",
-            1024, 1536, "assets/images/home", css_class="hero-illustration-img", eager=True,
+            800, 1200, "assets/images/home", css_class="hero-illustration-img", eager=True,
             skip_formats=HERO_SKIP
         )}
       </div>
     </div>
 
     <div class="container">
-      <div class="hero-mv-grid" data-reveal>
+      <div class="hero-mv-grid">
         <div class="hero-mv-card">
           <div class="hero-mv-icon"><i class="fa-solid fa-bullseye" aria-hidden="true"></i></div>
           <span class="hero-mv-label">Mission</span>
@@ -220,14 +374,14 @@ body = f'''
       </div>
     </div>
 
-    <div class="container">
-      <div class="stat-strip hero-stats" data-reveal>
-        <div class="stat-item"><div class="num"><span class="counter" data-target="12">0</span><span class="grad-text">+</span></div><div class="label">Projects Delivered</div></div>
-        <div class="stat-item"><div class="num"><span class="counter" data-target="2">0</span><span class="grad-text">+</span></div><div class="label">Years Building</div></div>
-        <div class="stat-item"><div class="num"><span class="counter" data-target="24">0</span><span class="grad-text">/7</span></div><div class="label">Support &amp; Monitoring</div></div>
-        <div class="stat-item"><div class="num"><span class="counter" data-target="15">0</span><span class="grad-text">+</span></div><div class="label">Technologies Mastered</div></div>
-      </div>
-    </div>
+    <!-- The hero statistics strip was removed here. It animated four counters -
+         12+ Projects Delivered, 2+ Years Building, 24/7 Support & Monitoring and
+         15+ Technologies Mastered - none of which was evidenced, and the 24/7
+         figure was a service-level promise rather than a statistic. No
+         replacement numbers have been invented. If verified figures are ever
+         available, the strip was a `.stat-strip.hero-stats` grid of
+         `.stat-item` blocks, each holding a `span.counter[data-target]`
+         animated by initCounters() in js/common.js. -->
 
     <a href="#what-we-build" class="scroll-indicator" aria-label="Scroll to explore">
       <span>Scroll</span>
@@ -258,27 +412,7 @@ body = f'''
         <p style="margin:0 auto;">Our websites are carefully designed, tested and optimized across desktop, laptop, tablet and mobile devices to deliver a seamless user experience on every screen.</p>
       </div>
 
-      <div class="device-stack device-stack-large" id="deviceStack" data-reveal="scale" role="group" aria-label="Showcase cycling through desktop, tablet, and mobile presentations of the DeepAbi brand" aria-live="off">
-        <div class="device-stack-card" data-role="desktop">
-          <div class="device-stack-frame">
-            {picture("deepabi-desktop", "DeepAbi website showcased on a desktop display", 640, 427, "assets/images/home")}
-          </div>
-          <span class="device-stack-label"><i class="fa-solid fa-desktop" aria-hidden="true"></i> Desktop</span>
-        </div>
-        <div class="device-stack-card" data-role="tablet">
-          <div class="device-stack-frame">
-            {picture("deepabi-tablet", "DeepAbi website showcased on a tablet display", 640, 427, "assets/images/home")}
-          </div>
-          <span class="device-stack-label"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Tablet</span>
-        </div>
-        <div class="device-stack-card" data-role="mobile">
-          <div class="device-stack-frame">
-            {picture("deepabi-mobile", "DeepAbi website showcased on a mobile display", 640, 427, "assets/images/home")}
-          </div>
-          <span class="device-stack-label"><i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> Mobile</span>
-        </div>
-      </div>
-
+{device_showcase}
       <div class="responsive-content" data-reveal>
         <h3 class="responsive-heading">Responsive Website Design</h3>
         <p class="responsive-lede">Whether a visitor lands on a 27-inch monitor or a five-inch phone, the experience is built once and tested everywhere — not bolted on after the fact.</p>
@@ -333,7 +467,7 @@ body = f'''
     <div class="container">
       <div class="featured-project" data-reveal>
         <div class="featured-visual">
-          {picture("featured-cardsession-platform", "Abstract mockup illustration of a commercial hardware and industrial supply website", 640, 434, "assets/images/projects")}
+          {picture("featured-cardsession-platform", "Abstract mockup illustration of a commercial hardware and industrial supply website", 640, 446, "assets/images/projects")}
         </div>
         <div class="featured-copy">
           <span class="badge badge-mint"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Launched 2025</span>
@@ -350,32 +484,13 @@ body = f'''
       </div>
     </div>
   </section>
-
-  <!-- ============ TESTIMONIALS (carousel) ============ -->
-  <section class="section section-alt">
-    <div class="container">
-      <div class="section-head center" data-reveal>
-        <!-- <span class="eyebrow">Client Feedback</span> -->
-        <h2>Testimonials</h2>
-        <p style="margin:0 auto;">What clients say about working with us.</p>
-      </div>
-      <div class="testimonial-carousel" data-reveal id="testimonialCarousel">
-        <button type="button" class="testimonial-arrow prev" id="testimonialPrev" aria-label="Previous testimonial"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
-        <div class="testimonial-track" id="testimonialTrack">
-          {testimonial_slides_html}
-        </div>
-        <button type="button" class="testimonial-arrow next" id="testimonialNext" aria-label="Next testimonial"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
-        <div class="testimonial-dots" id="testimonialDots" role="tablist" aria-label="Testimonial navigation"></div>
-      </div>
-    </div>
-  </section>
-
+{testimonials_section}
   <!-- ============ CTA ============ -->
   <section class="section" style="padding-top:0;">
     <div class="container">
       <div class="cta-section" data-reveal>
         <h2>Ready to build your next digital experience?</h2>
-        <p>Tell us about your project and we'll get back to you within one business day with next steps.</p>
+        <p>Tell us about your website project and the support you need. We build websites for businesses in Mogappair, Nolambur and Anna Nagar.</p>
         <a href="contact.html" class="btn btn-accent">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
       </div>
     </div>
@@ -385,7 +500,7 @@ body = f'''
 page(
     filename="index.html",
     active="home",
-    title="DeepAbi Innovations | Software Development Company in Chennai",
+    title=seo_title,
     description=seo_desc,
     body=body,
     canonical_path="",

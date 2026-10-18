@@ -49,7 +49,13 @@ WHATSAPP_URL = f"https://wa.me/{PHONE_1_TEL.replace('+','')}"
 # Google ignores meta keywords for ranking; this stays only as a compact,
 # honest summary of what the company does and where. Real targeting lives in
 # the titles, headings, body copy and structured data.
-SEO_KEYWORDS = (
+#
+# Two pools, selected by the service-visibility flags further down (see
+# SEO_KEYWORDS near SERVICE_REGISTRY). The full pool is the company's long-term
+# list. The website-only pool is that SAME list with every entry that advertises
+# a hidden service removed - nothing reworded, nothing added. Restoring the
+# services restores the full list.
+SEO_KEYWORDS_ALL = (
     "software development company in Chennai, software company in Chennai, "
     "custom software development Chennai, application development company Chennai, "
     "website development company in Chennai, web application development Chennai, "
@@ -58,6 +64,21 @@ SEO_KEYWORDS = (
     "business automation Chennai, software maintenance Chennai, "
     "software development company in Mogappair, website development company in Mogappair, "
     "software company Ambattur, software company Anna Nagar, "
+    "DeepAbi Innovations, DeepAbi"
+)
+
+# Entries kept verbatim from the list above. The removed ones named services
+# that are not public: custom software, application / web / mobile / desktop
+# development, SaaS, AI and business automation, software maintenance, and the
+# two generic "software development/company" descriptors. "software company
+# Ambattur" and "software company Anna Nagar" went with them because their
+# service wording advertised software development; they were deliberately NOT
+# reworded to say "website", since that would be retargeting rather than
+# aligning. Locality signal is unaffected - it lives in areaServed, the footer
+# and the meta descriptions.
+SEO_KEYWORDS_WEBSITE_ONLY = (
+    "website development company in Chennai, "
+    "website development company in Mogappair, "
     "DeepAbi Innovations, DeepAbi"
 )
 
@@ -157,6 +178,21 @@ HIDDEN_SERVICE_SLUGS = [s["slug"] for s in SERVICE_REGISTRY if not s["public"]]
 # not a separate switch: make any other service public and the site returns to
 # its multi-service presentation automatically.
 WEBSITE_ONLY_MODE = PUBLIC_SERVICE_SLUGS == ["website-development"]
+
+# What the shared footer says the company builds. It has to agree with what is
+# actually public: while only Website Development is switched on, the footer
+# must not advertise applications or custom software. This derives from the
+# same flags as the navigation and the sitemap, so restoring a service restores
+# the wording with it. The locality wording is deliberately left untouched here
+# - geographic targeting is a separate decision.
+if WEBSITE_ONLY_MODE:
+    FOOTER_BUILDS = "builds professional websites"
+else:
+    FOOTER_BUILDS = "builds websites, applications and custom software"
+
+# Meta keywords follow the same flags. Google ignores this tag for ranking, so
+# this is a consistency correction, not an optimisation.
+SEO_KEYWORDS = SEO_KEYWORDS_WEBSITE_ONLY if WEBSITE_ONLY_MODE else SEO_KEYWORDS_ALL
 
 
 def is_service_public(slug):
@@ -452,7 +488,7 @@ def footer():
             <img src="assets/images/logos_icons/web/logo-plate.png" alt="DeepAbi Innovations" width="288" height="132">
           </picture>
         </div>
-        <p>{TAGLINE_PRIMARY}. Based in Mogappair, DeepAbi Innovations builds websites, applications and custom software for businesses across Ambattur, Anna Nagar and Chennai.</p>
+        <p>{TAGLINE_PRIMARY}. Based in Mogappair, DeepAbi Innovations {FOOTER_BUILDS} for businesses across Ambattur, Anna Nagar and Chennai.</p>
         <div class="footer-social">
           <a href="https://www.instagram.com/deepabi_innovations/" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
           <a href="https://www.facebook.com/profile.php?id=61593491164948" target="_blank" rel="noopener noreferrer" aria-label="DeepAbi Innovations on Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
@@ -491,7 +527,15 @@ def footer():
   </div>
 </footer>
 
-<div class="toast" id="toast"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span id="toastMsg">Message sent successfully!</span></div>'''
+<!-- The toast has exactly one consumer: the contact form, which does not
+     send anything - it hands the enquiry to the visitor's own mail client.
+     So the shipped default must not claim a delivery. It previously read
+     "Message sent successfully!" with a green tick, which would have been
+     a false statement in any state that showed the toast before
+     js/pages/contact.js had rewritten it. The default is now the honest
+     hand-off wording and the icon is an envelope, not a success tick.
+     role="status" lets assistive technology announce it when it appears. -->
+<div class="toast" id="toast" role="status" aria-live="polite"><i class="fa-solid fa-envelope-open-text" aria-hidden="true"></i><span id="toastMsg">Your email app should open with this enquiry ready to send.</span></div>'''
 
 
 def picture(name, alt, w, h, folder, css_class="", loading="lazy", eager=False, skip_formats=()):
@@ -504,10 +548,14 @@ def picture(name, alt, w, h, folder, css_class="", loading="lazy", eager=False, 
     `eager=True` marks the hero-priority image (eager load + fetchpriority high),
     everything else lazy-loads with async decoding.
 
+    Pass loading="eager" (leaving eager=False) for an image that is inside the
+    first viewport but is not the page's priority hero: it loads in the normal
+    batch instead of being deferred, without claiming high fetch priority.
+
     `skip_formats` omits formats that exist on disk but are not wanted for a
-    particular image. It is used for the home hero, where the AVIF encode is
-    larger than the JPEG and would make the largest-paint image heavier rather
-    than lighter."""
+    particular image. It is used for the home hero, where the JPEG is a different
+    crop and aspect ratio from the other derivatives and would render wrongly if a
+    browser fell through to it."""
     loading_attr = "eager" if eager else loading
     fetchpriority = ' fetchpriority="high"' if eager else ''
     cls = f' class="{css_class}"' if css_class else ''
@@ -524,9 +572,13 @@ def picture(name, alt, w, h, folder, css_class="", loading="lazy", eager=False, 
         path = _os.path.join(ROOT, folder, ext, f"{name}.{ext}")
         if _os.path.exists(path):
             found[ext] = True
-    # fallback <img> src: prefer jpg, then jpeg, then png, then whatever's found
+    # fallback <img> src: prefer jpg, then jpeg, then png, then whatever's found.
+    # `skip_formats` applies here too, so an image whose JPEG derivative does not
+    # match the other formats can opt out of it and fall back to PNG instead.
     img_src = None
     for ext in ("jpg", "jpeg"):
+        if ext in skip_formats:
+            continue
         path = _os.path.join(ROOT, folder, ext, f"{name}.{ext}")
         if _os.path.exists(path):
             img_src = f"{folder}/{ext}/{name}.{ext}"

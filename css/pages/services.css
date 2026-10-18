@@ -86,6 +86,17 @@
 .services-hero .blob-1{width:360px; height:360px; background:radial-gradient(circle, var(--cyan), transparent 70%); top:-8%; left:-4%;}
 .services-hero .blob-2{width:340px; height:340px; background:radial-gradient(circle, var(--gold), transparent 70%); bottom:-15%; right:5%; animation-delay:2s;}
 .services-hero-grid{position:relative; z-index:2; display:grid; grid-template-columns:minmax(0, 1.1fr) minmax(0, 0.9fr); gap:48px; align-items:center;}
+/* Single-column variant, used while the hero illustration is hidden
+   (SHOW_SERVICES_HERO_ILLUSTRATION in scripts/pages/build_services.py, which
+   follows website-only mode). Without it the two-column grid would keep an
+   empty right-hand column and the heading would be squeezed into 55% of the
+   container for no reason. Capping the width keeps the measure readable instead
+   of letting the headline run the full 1200px. Removing the modifier restores
+   the two-column layout untouched. */
+.services-hero-grid.services-hero-text-only{
+  grid-template-columns:minmax(0, 1fr);
+  max-width:min(var(--container), 860px);
+}
 .services-hero-actions{display:flex; gap:16px; flex-wrap:wrap; margin-top:30px;}
 .services-hero-btn-outline{background:rgba(255,255,255,0.08); color:#fff; border-color:rgba(255,255,255,0.3); backdrop-filter:blur(6px);}
 .services-hero-btn-outline:hover{background:rgba(255,255,255,0.16); border-color:rgba(255,255,255,0.5);}
